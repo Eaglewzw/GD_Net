@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="30e8bf0f-db2d-4e88-9b91-18be22563c20" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Eaglewzw"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Eaglewzw/GD_Net.git",
+    "accountId": "d7117c44-b0b9-454a-9c26-90887ff20b1f"
+  }
+}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2z7KD9M32szlFTPZ7CNkFvAeums" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.backbone.executor": "Run",
+    "Python.download.executor": "Run",
+    "Python.gd_backbone.executor": "Run",
+    "Python.gd_net.executor": "Run",
+    "Python.head.executor": "Run",
+    "Python.inference.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.mcunet-10fps-vww_backbone.executor": "Run",
+    "Python.mcunet-512kb-2mb_imagenet_backbone.executor": "Run",
+    "Python.neck.executor": "Run",
+    "Python.person.executor": "Run",
+    "Python.proxyless-w0.25-r112_imagenet_backbone.executor": "Run",
+    "Python.test.executor": "Run",
+    "Python.vww.executor": "Run",
+    "Python.vww_backbone.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/home/verse/Python/GD_Net",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/backbone" />
+      <recent name="$PROJECT_DIR$/NAS" />
+      <recent name="$PROJECT_DIR$/Model" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/mcunet_model" />
+      <recent name="$PROJECT_DIR$/NAS" />
+      <recent name="$PROJECT_DIR$/NAS/1" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="GD_Net" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-PY-241.18034.82" />
+        <option value="bundled-python-sdk-975db3bf15a3-2767605e8bc2-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.18034.82" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="30e8bf0f-db2d-4e88-9b91-18be22563c20" name="Changes" comment="" />
+      <created>1751076549272</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1751076549272</updated>
+      <workItem from="1751076550358" duration="5841000" />
+      <workItem from="1751110802280" duration="2671000" />
+      <workItem from="1751115413486" duration="7632000" />
+      <workItem from="1751174675818" duration="2516000" />
+      <workItem from="1751197511908" duration="82000" />
+      <workItem from="1751283959946" duration="6024000" />
+      <workItem from="1751292905020" duration="2706000" />
+      <workItem from="1751345382488" duration="17000" />
+      <workItem from="1751347350285" duration="928000" />
+      <workItem from="1751372581191" duration="1392000" />
+      <workItem from="1751379288115" duration="983000" />
+      <workItem from="1751382131958" duration="97000" />
+      <workItem from="1751460069158" duration="5810000" />
+      <workItem from="1751551814324" duration="2274000" />
+      <workItem from="1751766674137" duration="8042000" />
+      <workItem from="1751819396814" duration="5497000" />
+      <workItem from="1751906032294" duration="2181000" />
+      <workItem from="1751933181084" duration="2022000" />
+      <workItem from="1751978747851" duration="1850000" />
+      <workItem from="1752050465997" duration="13000" />
+      <workItem from="1752067874741" duration="1887000" />
+      <workItem from="1752582898382" duration="1651000" />
+      <workItem from="1752671137669" duration="1217000" />
+      <workItem from="1752893828818" duration="80000" />
+      <workItem from="1753023203986" duration="3259000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/GD_Net$mcunet_512kb_2mb_imagenet_backbone.coverage" NAME="mcunet-512kb-2mb_imagenet_backbone Coverage Results" MODIFIED="1753024482915" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backbone" />
+    <SUITE FILE_PATH="coverage/GD_Net$gd_backbone.coverage" NAME="gd_backbone Coverage Results" MODIFIED="1753024697904" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NAS" />
+    <SUITE FILE_PATH="coverage/GD_Net$mcunet_10fps_vww_backbone.coverage" NAME="mcunet-10fps-vww_backbone Coverage Results" MODIFIED="1753024474198" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backbone" />
+    <SUITE FILE_PATH="coverage/GD_Net$inference.coverage" NAME="inference Coverage Results" MODIFIED="1751116988949" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NAS" />
+    <SUITE FILE_PATH="coverage/GD_Net$proxyless_w0_25_r112_imagenet_backbone.coverage" NAME="proxyless-w0.25-r112_imagenet_backbone Coverage Results" MODIFIED="1753024492209" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backbone" />
+    <SUITE FILE_PATH="coverage/GD_Net$test.coverage" NAME="test Coverage Results" MODIFIED="1753024563985" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NAS" />
+    <SUITE FILE_PATH="coverage/GD_Net$backbone.coverage" NAME="backbone Coverage Results" MODIFIED="1753024520651" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GD_Net$head.coverage" NAME="head Coverage Results" MODIFIED="1751112874522" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GD_Net$neck.coverage" NAME="neck Coverage Results" MODIFIED="1751112723630" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GD_Net$vww.coverage" NAME="vww Coverage Results" MODIFIED="1753023278675" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NAS" />
+    <SUITE FILE_PATH="coverage/GD_Net$person.coverage" NAME="person Coverage Results" MODIFIED="1753024552569" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NAS" />
+    <SUITE FILE_PATH="coverage/GD_Net$download.coverage" NAME="download Coverage Results" MODIFIED="1751174934315" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NAS" />
+    <SUITE FILE_PATH="coverage/GD_Net$main.coverage" NAME="main Coverage Results" MODIFIED="1752584231129" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NAS/proxylessnas" />
+    <SUITE FILE_PATH="coverage/GD_Net$vww_backbone.coverage" NAME="vww_backbone Coverage Results" MODIFIED="1753023269350" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NAS" />
+    <SUITE FILE_PATH="coverage/GD_Net$gd_net.coverage" NAME="gd_net Coverage Results" MODIFIED="1753024543522" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NAS" />
+  </component>
+</project>
