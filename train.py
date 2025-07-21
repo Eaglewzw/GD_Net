@@ -16,10 +16,9 @@ from utils import distributed_utils
 from utils.misc import compute_flops
 
 # ----------------- Config Components -----------------
-from config import build_dataset_config, build_model_config, build_trans_config
-
+from yolov3_mcunet_config import yolov3_cfg
 # ----------------- Model Components -----------------
-from models.detectors import build_model
+from gd_net.build import build_yolov3_mcunet
 
 # ----------------- Train Components -----------------
 from engine import build_trainer
@@ -169,12 +168,13 @@ def train():
 
     # ---------------------------- Build config ----------------------------
     data_cfg = build_dataset_config(args)
-    model_cfg = build_model_config(args)
+    model_cfg = yolov3_cfg(args)
     trans_cfg = build_trans_config(model_cfg['trans_type'])
 
     # ---------------------------- Build model ----------------------------
     ## Build model
-    model, criterion = build_model(args, model_cfg, device, data_cfg['num_classes'], True)
+    # model, criterion = build_model(args, model_cfg, device, data_cfg['num_classes'], True)
+    model, criterion = build_yolov3_mcunet(args, model_cfg, device, num_classes, trainable, deploy)
     model = model.to(device).train()
     model_without_ddp = model
     if args.distributed:

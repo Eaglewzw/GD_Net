@@ -4,16 +4,57 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="30e8bf0f-db2d-4e88-9b91-18be22563c20" name="Changes" comment="修改文件夹结构">
-      <change afterPath="$PROJECT_DIR$/gd_net/yolov3_mcu_backbone.py" afterDir="false" />
+    <list default="true" id="30e8bf0f-db2d-4e88-9b91-18be22563c20" name="Changes" comment="增加GD_Net主干网络部分">
+      <change afterPath="$PROJECT_DIR$/data/ImageNet.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/VisDrone.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/coco.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/coco128-seg.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/coco128.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/vis_drone.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/voc.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/build.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/coco.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/crowdhuman.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/customed.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/data_augment/ssd_augment.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/data_augment/strong_augment.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/data_augment/yolov5_augment.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/demo/images/000000000632.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/demo/images/000000000785.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/demo/images/000000000872.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/demo/images/000000000885.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/demo/images/000000001000.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/demo/images/000000001268.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/demo/images/000000001296.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/demo/images/000000001503.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/demo/images/000000001532.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/demo/videos/000006.mp4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/scripts/COCO2017.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/scripts/VOC2007.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/scripts/VOC2012.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/scripts/data_to_h5py.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/voc.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dataset/widerface.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/engine.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/evaluator/build.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/evaluator/coco_evaluator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/evaluator/crowdhuman_evaluator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/evaluator/crowdhuman_tools/APMRToolkits/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/evaluator/crowdhuman_tools/APMRToolkits/database.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/evaluator/crowdhuman_tools/APMRToolkits/image.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/evaluator/crowdhuman_tools/JIToolkits/JI_tools.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/evaluator/crowdhuman_tools/JIToolkits/matching.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/evaluator/crowdhuman_tools/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/evaluator/crowdhuman_tools/compute_APMR.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/evaluator/crowdhuman_tools/compute_JI.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/evaluator/customed_evaluator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/evaluator/voc_evaluator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/evaluator/widerface_evaluator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gd_net/build.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/yolov3_mcunet_config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NAS/gd_backbone.py" beforeDir="false" afterPath="$PROJECT_DIR$/NAS/gd_backbone.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/backbone.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/gd_net.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/yolov3_mcu_net.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/gd_net_basic.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/head.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/yolov3_head.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/neck.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/yolov3_neck.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,6 +109,7 @@
     "Python.person.executor": "Run",
     "Python.proxyless-w0.25-r112_imagenet_backbone.executor": "Run",
     "Python.test.executor": "Run",
+    "Python.train.executor": "Run",
     "Python.vww.executor": "Run",
     "Python.vww_backbone.executor": "Run",
     "Python.yolo_mcu_backbone.executor": "Run",
@@ -79,7 +121,7 @@
     "Python.yolov3_neck.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/verse/Python/GD_Net/gd_net",
+    "last_opened_file_path": "/home/verse/Python/GD_Net",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -91,8 +133,8 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/gd_net" />
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/gd_net" />
       <recent name="$PROJECT_DIR$/backbone" />
       <recent name="$PROJECT_DIR$/NAS" />
       <recent name="$PROJECT_DIR$/Model" />
@@ -172,7 +214,7 @@
       <workItem from="1752893828818" duration="80000" />
       <workItem from="1753023203986" duration="3786000" />
       <workItem from="1753027153695" duration="718000" />
-      <workItem from="1753101003313" duration="6921000" />
+      <workItem from="1753101003313" duration="10504000" />
     </task>
     <task id="LOCAL-00001" summary="修改文件夹结构">
       <option name="closed" value="true" />
@@ -182,7 +224,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753101160377</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="增加GD_Net主干网络部分">
+      <option name="closed" value="true" />
+      <created>1753114614731</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1753114614731</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -201,12 +251,14 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="修改文件夹结构" />
-    <option name="LAST_COMMIT_MESSAGE" value="修改文件夹结构" />
+    <MESSAGE value="增加GD_Net主干网络部分" />
+    <option name="LAST_COMMIT_MESSAGE" value="增加GD_Net主干网络部分" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/GD_Net$yolov3_fpn.coverage" NAME="yolov3_fpn Coverage Results" MODIFIED="1753113455348" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gd_net" />
     <SUITE FILE_PATH="coverage/GD_Net$inference.coverage" NAME="inference Coverage Results" MODIFIED="1751116988949" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NAS" />
     <SUITE FILE_PATH="coverage/GD_Net$gd_net_basic.coverage" NAME="gd_net_basic Coverage Results" MODIFIED="1753102245765" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gd_net" />
+    <SUITE FILE_PATH="coverage/GD_Net$train.coverage" NAME="train Coverage Results" MODIFIED="1753114529272" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GD_Net$yolov3_basic.coverage" NAME="yolov3_basic Coverage Results" MODIFIED="1753113451171" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gd_net" />
     <SUITE FILE_PATH="coverage/GD_Net$download.coverage" NAME="download Coverage Results" MODIFIED="1751174934315" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NAS" />
     <SUITE FILE_PATH="coverage/GD_Net$main.coverage" NAME="main Coverage Results" MODIFIED="1752584231129" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/NAS/proxylessnas" />
