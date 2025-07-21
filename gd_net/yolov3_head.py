@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from gd_net_basic import Conv
+from yolov3_basic import Conv
 
 
 class DecoupledHead(nn.Module):

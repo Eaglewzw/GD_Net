@@ -1,9 +1,16 @@
 import torch
 import torch.nn as nn
+
 from utils.misc import multiclass_nms
 
+from yolov3_mcu_backbone import _make_backbone
+from yolov3_neck import build_neck
+from yolov3_fpn import build_fpn
+from yolov3_head import build_head
+
+
 # YOLOv3
-class gd_net(nn.Module):
+class YOLOv3_McuNet(nn.Module):
     def __init__(self,
                  cfg,
                  device,
@@ -15,9 +22,7 @@ class gd_net(nn.Module):
                  deploy=False,
                  no_multi_labels=False,
                  nms_class_agnostic=False):
-        super(gd_net, self).__init__()
-
-
+        super(YOLOv3_McuNet, self).__init__()
         # ------------------- Basic parameters -------------------
         self.cfg = cfg                                 # 模型配置文件
         self.device = device                           # cuda或者是cpu
@@ -39,17 +44,38 @@ class gd_net(nn.Module):
 
         # ------------------- Network Structure -------------------
         ## 主干网络
+        # self.backbone, feats_dim = build_backbone(
+        #     cfg['backbone'], trainable&cfg['pretrained'])
 
+        self.backbone, feats_dim = _make_backbone()
 
         ## 颈部网络: SPP模块
-
+        self.neck = build_neck(cfg, in_dim=feats_dim[-1], out_dim=feats_dim[-1])
+        feats_dim[-1] = self.neck.out_dim
 
         ## 颈部网络: 特征金字塔
-
+        self.fpn = build_fpn(cfg=cfg, in_dims=feats_dim, out_dim=int(256*cfg['width']))
+        self.head_dim = self.fpn.out_dim
 
         ## 检测头
+        self.non_shared_heads = nn.ModuleList(
+            [build_head(cfg, head_dim, head_dim, num_classes)
+             for head_dim in self.head_dim
+             ])
 
         ## 预测层
+        self.obj_preds = nn.ModuleList(
+            [nn.Conv2d(head.reg_out_dim, 1 * self.num_anchors, kernel_size=1)
+             for head in self.non_shared_heads
+             ])
+        self.cls_preds = nn.ModuleList(
+            [nn.Conv2d(head.cls_out_dim, self.num_classes * self.num_anchors, kernel_size=1)
+             for head in self.non_shared_heads
+             ])
+        self.reg_preds = nn.ModuleList(
+            [nn.Conv2d(head.reg_out_dim, 4 * self.num_anchors, kernel_size=1)
+             for head in self.non_shared_heads
+             ])
 
 
         # ---------------------- Basic Functions ----------------------

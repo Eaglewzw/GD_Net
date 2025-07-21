@@ -3,13 +3,16 @@ import torch.nn as nn
 import time
 from thop import profile
 from mcunet.model_zoo import build_model
+# mcunet-10fps, mcunet-5fps, mcunet-256kB, mcunet-320kB, mcunet-512kB,
+# mbv2-320kB, proxyless-320kB, mcunet-10fps-vww, mcunet-5fps-vww, mcunet-320kB-vww
+
 
 class MCUNetBackbone(nn.Module):
     def __init__(self, checkpoint_path=None):
         super().__init__()
         # 1. 构建原始模型（不包含最后的分类层）
         self.base_model, self.image_size, _ = build_model(
-            net_id="mcunet-512kB",
+            net_id="mcunet-10fps-vww",
             pretrained=False
         )
 
@@ -66,7 +69,7 @@ class MCUNetBackbone(nn.Module):
 # 使用示例
 if __name__ == "__main__":
     # 初始化Backbone
-    backbone = MCUNetBackbone("/home/verse/Python/GD_Net/mcunet_model/mcunet-512kb-2mb_imagenet.pth")
+    backbone = MCUNetBackbone("/home/verse/Python/GD_Net/mcunet_model/mcunet-10fps_vww.pth")
 
     # 测试输入
     dummy_input = torch.randn(1, 3, backbone.image_size, backbone.image_size)
