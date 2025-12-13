@@ -48,8 +48,6 @@ Performance metrics based on input size `(1, 3, 640, 640)`:
 | **FPN / PAN** | Feature Fusion | 143,184 | ~14% |
 | **Head** | Decoupled Heads (x3) | 500,384 | ~48% |
 
-<details>
-<summary>Click to view raw evaluation log</summary>
 
 ```text
 /home/verser/anaconda3/envs/YOLOVx/bin/python eval.py 
@@ -69,9 +67,6 @@ Non-trainable params          : 0 (0.000 M)
 ======================================================================
 ````
 
-\</details\>
-
------
 
 ## 📦 Backbone Zoo
 

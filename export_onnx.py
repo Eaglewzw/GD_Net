@@ -317,7 +317,7 @@ if __name__ == "__main__":
     # 配置参数
     pth_model_path = "./checkpoints/best_yolov3_mcu.pth"  # 训练好的模型路径
     onnx_output_path = "./checkpoints/yolov3_mcu.onnx"    # 输出的ONNX文件路径
-    img_size = 640
+    img_size = 256
     num_classes = 1
     device = "cuda" if torch.cuda.is_available() else "cpu"
 

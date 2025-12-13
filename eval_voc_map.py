@@ -134,7 +134,7 @@ def evaluate_dataset():
     dataset_root = '/media/verser/robot/Dataset/DT_Drone'  # 替换成你的路径
     img_dir = os.path.join(dataset_root, 'JPEGImages')
     ann_dir = os.path.join(dataset_root, 'Annotations')
-    val_list_path = os.path.join(dataset_root, 'ImageSets/Main/val.txt')  # val.txt 路径
+    val_list_path = os.path.join(dataset_root, 'imageSets/Main/val.txt')  # val.txt 路径
 
     # 读取 val 图像 ID 列表
     with open(val_list_path, 'r') as f:

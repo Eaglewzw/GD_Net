@@ -8,7 +8,6 @@ from .yolov3_neck import build_neck
 from .yolov3_fpn import build_fpn
 from .yolov3_head import build_head
 from .yolov3_backbone import build_backbone
-from .vww_net_backone import build_proxyless_backbone
 
 
 # YOLOv3
@@ -54,7 +53,6 @@ class YOLOv3_McuNet(nn.Module):
 
         # self.backbone, feats_dim = build_backbone(model_name='darknet53', pretrained=True)
         self.backbone, feats_dim = mcunet_vww_make_backbone()
-        # self.backbone, feats_dim = build_proxyless_backbone(pretrained=False, resolution=64, num_classes=0)
 
         # print(f"Backbone output dimensions: {feats_dim}")  # Backbone output dimensions: [24, 48, 96]
         # print(f"Last feature dimension: {feats_dim[-1]}")  # Last feature dimension: 96
