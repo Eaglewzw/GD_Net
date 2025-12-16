@@ -32,7 +32,7 @@ def collate_fn(batch):
 # ------------------- 配置 -------------------
 torch.cuda.set_device(0)  # 设置默认GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-epochs = 50
+epochs = 100
 batch_size = 32
 img_size = 256
 num_classes = 1
@@ -93,6 +93,32 @@ dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True,
 
 # ------------------- 模型 / 损失 / 优化器 -------------------
 model = YOLOv3_McuNet(cfg, device, num_classes=num_classes, trainable=True).to(device)
+
+pretrained_path = "/home/verser/Python/GD_Net/checkpoints/best_yolov3_mcu.pth"
+if cfg['pretrained'] and os.path.exists(pretrained_path):
+    print(f"🔄 正在加载预训练模型: {pretrained_path} ...")
+    try:
+        # 1. 加载 checkpoint
+        checkpoint = torch.load(pretrained_path, map_location=device)
+
+        # 2. 判断 checkpoint 格式
+        if 'model_state_dict' in checkpoint:
+            state_dict = checkpoint['model_state_dict']
+        else:
+            state_dict = checkpoint
+
+        # 3. 加载权重到模型
+        model.load_state_dict(state_dict, strict=False)
+        print("✅ 预训练权重加载成功！")
+
+    except Exception as e:
+        print(f"❌ 加载失败: {e}")
+        print("⚠️ 将从头开始训练 (主干网络可能仍会加载其自己的预训练权重)")
+else:
+    print("ℹ️ 未指定预训练模型或文件不存在，将从头开始训练。")
+
+
+# ==================================================================
 criterion = build_criterion(cfg, device, num_classes=num_classes)
 optimizer = optim.SGD(model.parameters(),
                       lr=0.012,
@@ -114,7 +140,7 @@ scheduler = OneCycleLR(
 
 # ------------------- 训练准备 -------------------
 best_loss, best_epoch = float('inf'), 0
-save_dir = "/home/verser/Videos/checkpoints"
+save_dir = "/home/verser/Python/GD_Net/checkpoints"
 os.makedirs(save_dir, exist_ok=True)
 
 epoch_list = []; loss_total_list = []; loss_obj_list = []; loss_cls_list = []; loss_box_list = []

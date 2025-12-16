@@ -188,7 +188,7 @@ def detect_video_onnx(video_path, save_path, onnx_path, conf_thresh=0.3, nms_thr
 
 # ============================== 运行 ==============================
 if __name__ == '__main__':
-    video_path = '/media/verse/roboot1/01_UAV_Vv/Westlake_University/phantom12.mp4'
+    video_path = '/media/verser/robot/Dataset/ARD-MAV/videos/phantom16.mp4'
     save_path  = './det_results_onnx/'
     onnx_path  = './checkpoints/yolov3_mcu.onnx'
 
