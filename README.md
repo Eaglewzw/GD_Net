@@ -35,7 +35,7 @@ Performance metrics based on input size `(1, 3, 640, 640)`:
 | Metric | Value | Note |
 | :--- | :--- | :--- |
 | **Total Parameters** | **1,039,462 (1.04 M)** | Extremely Lightweight |
-| **GFLOPs** | **3.000 G** | Low Computation |
+| **GFLOPs** | **480.041M** | Low Computation |
 | **Model Size** | **4.47 MB** | Easy Deployment |
 | **Inference Device** | CUDA / CPU | Tested on CUDA |
 
@@ -56,12 +56,12 @@ Using device: cuda
 ======================================================================
                             MODEL SUMMARY                             
 ======================================================================
-Input size                    : (1, 3, 640, 640)
+Input size                    : (1, 3, 256, 256)
 Total params                  : 1,039,462 (1.039 M)
 Trainable params              : 1,039,462 (1.039 M)
 Non-trainable params          : 0 (0.000 M)
 ============================ FLOPs ===================================
-  ├─ FLOPs                         : 3.000G
+  ├─ FLOPs                         : 480.041M
   ├─ Params (thop)                 : 920.486K
   ├─ Model size on disk            : 4.47 MB
 ======================================================================

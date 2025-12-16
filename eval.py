@@ -5,7 +5,7 @@ import torch
 from gd_net.yolov3_mcu_net import YOLOv3_McuNet
 
 
-def print_model_size(model, input_size=(1, 3, 640, 640), device='cuda'):
+def print_model_size(model, input_size=(1, 3, 256, 256), device='cuda'):
     """
     全面打印模型信息（增强版）：
     - 总参数量 / FLOPs / 权重文件大小
