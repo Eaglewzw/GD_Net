@@ -6,12 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="70c332e8-b513-4de1-8b28-ce4bd619d064" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoints/best_yolov3_mcu.pth" beforeDir="false" afterPath="$PROJECT_DIR$/checkpoints/best_yolov3_mcu.pth" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoints/yolov3_mcu.onnx" beforeDir="false" afterPath="$PROJECT_DIR$/checkpoints/yolov3_mcu.onnx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoints/yolov3_mcu.onnx.data" beforeDir="false" afterPath="$PROJECT_DIR$/checkpoints/yolov3_mcu.onnx.data" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inference.py" beforeDir="false" afterPath="$PROJECT_DIR$/inference.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/onnx_inference.py" beforeDir="false" afterPath="$PROJECT_DIR$/onnx_inference.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_lr.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_lr.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -128,7 +123,7 @@
       <workItem from="1765624372352" duration="1734000" />
       <workItem from="1765771097831" duration="2000" />
       <workItem from="1765800224902" duration="370000" />
-      <workItem from="1765804109947" duration="5866000" />
+      <workItem from="1765804109947" duration="6051000" />
     </task>
     <servers />
   </component>

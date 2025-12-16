@@ -102,7 +102,7 @@ The following chart illustrates the training loss convergence:
 Ensure you have Python 3.8+ and PyTorch installed.
 
 ```bash
-xx
+opencv
 ```
 
 ### 2\. Inference / Evaluation
@@ -110,7 +110,7 @@ xx
 To evaluate the model on your dataset:
 
 ```bash
-xx
+python infernence.py
 ```
 
 ### 3\. Training
@@ -118,7 +118,7 @@ xx
 To train GD\_Net from scratch using the MCUNet backbone:
 
 ```bash
-xx
+python train_lr.py
 ```
 
 -----
