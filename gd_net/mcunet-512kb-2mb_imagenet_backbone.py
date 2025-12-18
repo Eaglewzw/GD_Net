@@ -58,8 +58,8 @@ class mcunet_vww_Backbone(nn.Module):
         # 3. 定义输出层索引
         # 这些索引对应 blocks 列表中的下标
         self.out_indices = {
-            5: 0,  # P3
-            10: 1,  # P4
+            6: 0,  # P3
+            12: 1,  # P4
             15: 2  # P5 (Backbone 结束处, 96通道)
         }
         self.max_idx = max(self.out_indices.keys())

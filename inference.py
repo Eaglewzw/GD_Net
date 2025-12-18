@@ -233,7 +233,7 @@ if __name__ == '__main__':
     # 默认路径配置
     default_video = '/media/verser/robot/Dataset/ARD-MAV/videos/phantom28.mp4'
     default_img = '/home/verser/Pictures/DJI.jpg'  # 你可以改成你的测试图片路径
-    default_weights = './checkpoints/best_yolov3_mcu.pth'
+    default_weights = './checkpoints/gd_net_l.pth'
 
     parser.add_argument('--source', type=str, default=default_img, help='Path to image or video file')
     parser.add_argument('--weights', type=str, default=default_weights, help='Path to .pth model')

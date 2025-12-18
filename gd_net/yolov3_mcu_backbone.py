@@ -10,11 +10,11 @@ from thop import profile
 # ---------------------------------------------------
 # 路径配置
 # ---------------------------------------------------
-GLOBAL_PTH_PATH = "/home/verser/Python/GD_Net/mcunet_model/mcunet-10fps_vww.pth"
-GLOBAL_JSON_PATH = "/home/verser/Python/GD_Net/mcunet_model/mcunet-10fps_vww.json"
+# GLOBAL_PTH_PATH = "/home/verser/Python/GD_Net/mcunet_model/mcunet-10fps_vww.pth"
+# GLOBAL_JSON_PATH = "/home/verser/Python/GD_Net/mcunet_model/mcunet-10fps_vww.json"
 
-# GLOBAL_PTH_PATH = "/home/verser/Python/GD_Net/mcunet_model/mcunet-512kb-2mb_imagenet.pth"
-# GLOBAL_JSON_PATH = "/home/verser/Python/GD_Net/mcunet_model/mcunet-512kb-2mb_imagenet.json"
+GLOBAL_PTH_PATH = "/home/verser/Python/GD_Net/mcunet_model/mcunet-512kb-2mb_imagenet.pth"
+GLOBAL_JSON_PATH = "/home/verser/Python/GD_Net/mcunet_model/mcunet-512kb-2mb_imagenet.json"
 
 
 def _build_raw_mcunet():
@@ -59,11 +59,17 @@ class mcunet_vww_Backbone(nn.Module):
             del self.model.feature_mix_layer
 
         # 3. 定义输出层索引
-        # 这些索引对应 blocks 列表中的下标
+        #----------------------------VWW----------------------------#
+        # self.out_indices = {
+        #     5: 0,  # P3
+        #     10: 1,  # P4
+        #     12: 2  # P5 (Backbone 结束处, 96通道)
+        # }
+        # ----------------------------imagenet-512kb-2mb----------------------------#
         self.out_indices = {
-            5: 0,  # P3
-            10: 1,  # P4
-            12: 2  # P5 (Backbone 结束处, 96通道)
+            6: 0,  # P3
+            12: 1,  # P4
+            15: 2  # P5 (Backbone 结束处, 96通道)
         }
         self.max_idx = max(self.out_indices.keys())
 

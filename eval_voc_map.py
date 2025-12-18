@@ -141,11 +141,11 @@ def evaluate_dataset():
         img_ids = [line.strip() for line in f.readlines()]
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    img_size = 640
+    img_size = 320
 
     # ==================== 模型加载 ====================
     print("正在加载模型权重...")
-    ckpt = torch.load('/home/verser/Python/GD_Net/checkpoints/best_yolov3_mcu.pth', map_location='cpu')
+    ckpt = torch.load('/home/verser/Python/GD_Net/checkpoints/gd_net_l.pth', map_location='cpu')
 
     model = YOLOv3_McuNet(
         cfg,

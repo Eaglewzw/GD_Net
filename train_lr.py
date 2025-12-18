@@ -32,9 +32,9 @@ def collate_fn(batch):
 # ------------------- 配置 -------------------
 torch.cuda.set_device(0)  # 设置默认GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-epochs = 100
-batch_size = 32
-img_size = 256
+epochs = 500
+batch_size = 64
+img_size = 320
 num_classes = 1
 
 cfg = {

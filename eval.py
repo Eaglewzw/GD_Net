@@ -132,5 +132,5 @@ if __name__ == "__main__":
     ).to(device)
 
     # 你可以自由切换输入分辨率看不同大小
-    print_model_size(model, input_size=(1, 3, 256, 256), device=device)  # MCU 版 64×64
+    print_model_size(model, input_size=(1, 3, 320, 320), device=device)  # MCU 版 64×64
     # print_model_size(model, input_size=(1, 3, 640, 640), device=device)  # 标准 640×640
