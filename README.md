@@ -123,43 +123,5 @@ cfg['lsnet_type']    = 'lsnet_t'  # 或 'lsnet_s' / 'lsnet_b'
 The following chart illustrates the training loss convergence:
 
 > *The figure shows the bounding box, objectness, and classification losses decreasing over epochs.*
-![效果图片1](./assets/results_yolo_style.png"dell_tinydark53_training_all_losses.png")
-> 
-
-
------
-
-## 🛠️ Installation & Usage
-
-### 1\. Requirements
-
-Ensure you have Python 3.10+ and PyTorch installed.
-
-```bash
-opencv
-```
-
-### 2\. Inference / Evaluation
-
-To evaluate the model on your dataset:
-
-```bash
-python infernence.py
-```
-
-### 3\. Training
-
-To train GD\_Net from scratch using the MCUNet backbone:
-
-```bash
-python train_lr.py
-```
-
------
-
-## 🤝 Acknowledgements
-
-  * **MCUNet**: For the efficient ProxylessNAS backbone architecture.
-  * **YOLO**: For the object detection head design concepts.
-
------
+![效果图片1](./assets/results_yolo_style.png"training_all_losses.png")
+>
