@@ -6,47 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="70c332e8-b513-4de1-8b28-ce4bd619d064" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/ILSVRC2017_test_00000001.JPEG" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/training_all_losses.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoints/gd_net_l.pth" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoints/gd_net_s.pth" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dataset/build.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataset/factory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dataset/dataset_voc.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataset/voc_dataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dataset/voc.py" beforeDir="false" afterPath="$PROJECT_DIR$/dataset/voc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/det_results/DJI.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/val.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval_voc_map.py" beforeDir="false" afterPath="$PROJECT_DIR$/val_voc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/export_onnx.py" beforeDir="false" afterPath="$PROJECT_DIR$/export.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/build.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/factory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/loss.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/matcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/assigner.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/mcunet-512kb-2mb_imagenet_backbone.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/scripts/test_backbone_mcunet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/proxyless-w0.25-r112_imagenet_backbone.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/scripts/test_backbone_proxyless.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/ssd_augment.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/augment_ssd.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/strong_augment.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/augment_strong.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/yolo_dataset_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/dataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/yolov3_backbone.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/backbone_darknet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/yolov3_basic.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/modules.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/yolov3_fpn.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/fpn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/yolov3_head.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/head.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/yolov3_mcu_backbone.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/backbone_mcunet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/yolov3_mcu_net.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/yolov3_neck.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/neck.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/yolov5_augment.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/augment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inference.py" beforeDir="false" afterPath="$PROJECT_DIR$/predict.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/onnx_inference.py" beforeDir="false" afterPath="$PROJECT_DIR$/predict_onnx.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_lr.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/training_all_losses.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/box_ops.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/ops.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/distributed_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dist.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/kmeans_anchor.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/anchors.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/misc.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/torch_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/solver/lr_scheduler.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/solver/schedulers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/solver/optimizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/solver/optimizers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/vis_tools.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/plotting.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yolov3_mcu_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/cfg.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yolov3_mcunet_config.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/results_yolo_style.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/results_yolo_style.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoints/best_yolov3_mcu.pth" beforeDir="false" afterPath="$PROJECT_DIR$/checkpoints/best_yolov3_mcu.pth" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/predict.py" beforeDir="false" afterPath="$PROJECT_DIR$/predict.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,6 +55,7 @@
     "Python.onnx_inference.executor": "Run",
     "Python.person_tflite.executor": "Run",
     "Python.predict.executor": "Run",
+    "Python.prepare_udacity.executor": "Run",
     "Python.test.executor": "Run",
     "Python.train.executor": "Run",
     "Python.train_lr.executor": "Run",
@@ -108,7 +72,7 @@
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "git-widget-placeholder": "main",
     "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "/home/verser/Python/Net",
+    "last_opened_file_path": "/home/verser/Python/GD_Net/assets",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -191,7 +155,7 @@
       <workItem from="1767509132512" duration="2635000" />
       <workItem from="1767678612688" duration="33619000" />
       <workItem from="1767929815446" duration="69000" />
-      <workItem from="1775022894997" duration="29487000" />
+      <workItem from="1775022894997" duration="42502000" />
     </task>
     <servers />
   </component>
@@ -203,13 +167,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/predict.py</url>
-          <line>26</line>
+          <line>27</line>
           <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/export.py</url>
-          <line>21</line>
-          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -217,11 +176,12 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/GD_Net$export.coverage" NAME="export 覆盖结果" MODIFIED="1775062001043" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GD_Net$train_lr.coverage" NAME="train_lr 覆盖结果" MODIFIED="1775052413526" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GD_Net$prepare_udacity.coverage" NAME="prepare_udacity 覆盖结果" MODIFIED="1775118182354" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GD_Net$gd_backbone_detect.coverage" NAME="gd_backbone_detect 覆盖结果" MODIFIED="1765890590437" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model_test" />
     <SUITE FILE_PATH="coverage/GD_Net$person_tflite.coverage" NAME="person_tflite 覆盖结果" MODIFIED="1765890318874" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model_test" />
     <SUITE FILE_PATH="coverage/GD_Net$yolov3_fpn.coverage" NAME="yolov3_fpn 覆盖结果" MODIFIED="1766476220021" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gd_net" />
-    <SUITE FILE_PATH="coverage/GD_Net$train.coverage" NAME="train 覆盖结果" MODIFIED="1775092187274" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GD_Net$predict.coverage" NAME="predict 覆盖结果" MODIFIED="1775091728871" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GD_Net$train.coverage" NAME="train 覆盖结果" MODIFIED="1775119538247" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GD_Net$predict.coverage" NAME="predict 覆盖结果" MODIFIED="1775126204385" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GD_Net$voc_dataset.coverage" NAME="voc_dataset 覆盖结果" MODIFIED="1775095954312" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dataset" />
     <SUITE FILE_PATH="coverage/GD_Net$test.coverage" NAME="test 覆盖结果" MODIFIED="1767836229723" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GD_Net$mcunet_512kb_2mb_imagenet_backbone.coverage" NAME="mcunet-512kb-2mb_imagenet_backbone 覆盖结果" MODIFIED="1765892822896" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gd_net" />
