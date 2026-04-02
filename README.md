@@ -120,8 +120,6 @@ cfg['lsnet_type']    = 'lsnet_t'  # 或 'lsnet_s' / 'lsnet_b'
 
 ## 🖼️ Training Results
 
-The following chart illustrates the training loss convergence:
-
-> *The figure shows the bounding box, objectness, and classification losses decreasing over epochs.*
-![效果图片1](./assets/results_yolo_style.png"training_all_losses.png")
->
+<div align="center">
+  <img src="./assets/results_yolo_style.png" alt="无人机拦截框架" width="80%">
+</div>
