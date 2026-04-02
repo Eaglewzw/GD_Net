@@ -6,9 +6,9 @@ import xml.etree.ElementTree as ET
 import torch.utils.data as data
 
 try:
-    from .gd_net.strong_augment import MosaicAugment, MixupAugment
+    from .gd_net.augment_strong import MosaicAugment, MixupAugment
 except:
-    from  gd_net.strong_augment import MosaicAugment, MixupAugment
+    from  gd_net.augment_strong import MosaicAugment, MixupAugment
 
 
 # VOC class names

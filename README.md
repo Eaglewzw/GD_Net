@@ -70,17 +70,51 @@ Non-trainable params          : 0 (0.000 M)
 
 ## 📦 Backbone Zoo
 
-GD\_Net supports various MCUNet-based backbones to balance speed and accuracy.
+GD\_Net 支持 MCUNet 系列和 LSNet 系列两类主干网络，通过 `cfg['backbone_type']` 一键切换。
 
-| Model File | Size | Recommended Scenario |
-| :--- | :--- | :--- |
-| **`mcunet-10fps_vww.pth`** | **1.5 MB** | **Default (Balanced)** |
-| `mcunet-5fps_vww.pth` | 1.8 MB | Ultra Low Power |
-| `proxyless-w0.25-r112_imagenet.pth`| 2.3 MB | General Purpose |
-| `mcunet-320kb-1mb_vww.pth` | 2.7 MB | Visual Wake Words |
-| `mcunet-256kb-1mb_imagenet.pth` | 2.9 MB | ImageNet Classification |
-| `mcunet-320kb-1mb_imagenet.pth` | 2.9 MB | ImageNet Classification |
-| `mcunet-512kb-2mb_imagenet.pth` | 6.8 MB | Higher Accuracy |
+### MCUNet 系列
+
+每个模型都有固定的**设计输入分辨率**，训练时 `--img-size` 应与之对齐。
+特征图尺寸以设计分辨率输入为准，P3/P4/P5 对应 stride=8/16/32 三个尺度。
+
+| 模型文件 | 设计输入 | P3 特征图 (ch) | P4 特征图 (ch) | P5 特征图 (ch) | 推荐场景 |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| `mcunet-10fps_vww` | **64×64** | 8×8 (24) | 4×4 (40) | 2×2 (96) | 极低功耗 MCU |
+| `mcunet-5fps_vww` | **80×80** | 10×10 (24) | 5×5 (40) | 2×2 (96) | 超轻量 VWW |
+| `proxyless-w0.25-r112_imagenet` | **112×112** | 14×14 (16) | 7×7 (24) | 3×3 (48) | 通用轻量 |
+| `mcunet-320kb-1mb_vww` | **144×144** | 18×18 (24) | 9×9 (40) | 4×4 (96) | VWW 任务 |
+| `mcunet-256kb-1mb_imagenet` | **160×160** | 20×20 (24) | 10×10 (48) | 5×5 (96) | 均衡推荐 |
+| `mcunet-512kb-2mb_imagenet` | **160×160** | 20×20 (40) | 10×10 (96) | 5×5 (192) | **当前默认，精度较高** |
+| `mcunet-320kb-1mb_imagenet` | **176×176** | 22×22 (24) | 11×11 (48) | 5×5 (96) | 稍大分辨率 |
+| `proxyless-w0.3-r176_imagenet` | **176×176** | 22×22 (16) | 11×11 (24) | 5×5 (64) | 通用大分辨率 |
+
+> **注意**：MCUNet 是全卷积网络，可以接受任意分辨率输入，但训练时应使用对应的设计分辨率以保证特征图尺寸合理，避免 P5 特征图过小（如 2×2）导致检测退化。
+
+### LSNet 系列
+
+LSNet 的 Stem 固定为 3×stride=2，起始即 8 倍下采样，之后每个 Stage 间再 stride=2。
+设计基准分辨率为 **224×224**，使用 LSNet 时 `--img-size` 建议设为 `224`。
+
+| 版本 | 推荐输入 | P3 特征图 (ch) | P4 特征图 (ch) | P5 特征图 (ch) | 规模 |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| `lsnet_t` | **224×224** | 28×28 (64) | 14×14 (128) | 7×7 (256) | Tiny |
+| `lsnet_s` | **224×224** | 28×28 (96) | 14×14 (192) | 7×7 (320) | Small |
+| `lsnet_b` | **224×224** | 28×28 (128) | 14×14 (256) | 7×7 (384) | Base |
+
+### 切换主干网络
+
+在 `yolov3_mcu_config.py` 中修改以下字段：
+
+```python
+# 使用 MCUNet（默认）
+cfg['backbone_type'] = 'mcunet'   # 同时修改 MODEL_ZOO 中的 json/pth 路径
+# 训练时：python train_lr.py --img-size 160
+
+# 使用 LSNet
+cfg['backbone_type'] = 'lsnet'
+cfg['lsnet_type']    = 'lsnet_t'  # 或 'lsnet_s' / 'lsnet_b'
+# 训练时：python train_lr.py --img-size 224
+```
 
 -----
 
@@ -89,7 +123,7 @@ GD\_Net supports various MCUNet-based backbones to balance speed and accuracy.
 The following chart illustrates the training loss convergence:
 
 > *The figure shows the bounding box, objectness, and classification losses decreasing over epochs.*
-![效果图片1](./assets/training_all_losses.png "dell_tinydark53_training_all_losses.png")
+![效果图片1](./assets/results_yolo_style.png"dell_tinydark53_training_all_losses.png")
 > 
 
 
@@ -99,7 +133,7 @@ The following chart illustrates the training loss convergence:
 
 ### 1\. Requirements
 
-Ensure you have Python 3.8+ and PyTorch installed.
+Ensure you have Python 3.10+ and PyTorch installed.
 
 ```bash
 opencv

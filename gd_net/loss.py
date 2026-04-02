@@ -1,8 +1,8 @@
 import torch
 import torch.nn.functional as F
-from .matcher import Yolov3Matcher
-from utils.box_ops import get_ious
-from utils.distributed_utils import get_world_size, is_dist_avail_and_initialized
+from .assigner import Yolov3Matcher
+from utils.ops import get_ious
+from utils.dist import get_world_size, is_dist_avail_and_initialized
 
 
 class Criterion(object):
