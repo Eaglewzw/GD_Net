@@ -14,14 +14,16 @@ class Criterion(object):
         self.loss_obj_weight = cfg['loss_obj_weight']
         self.loss_cls_weight = cfg['loss_cls_weight']
         self.loss_box_weight = cfg['loss_box_weight']
+        self.obj_pos_weight  = cfg.get('obj_pos_weight', 1.0)
 
         # matcher
         self.matcher = Yolov3Matcher(num_classes, 3, cfg['anchor_size'], cfg['iou_thresh'])
 
 
     def loss_objectness(self, pred_obj, gt_obj):
-        loss_obj = F.binary_cross_entropy_with_logits(pred_obj, gt_obj, reduction='none')
-
+        pos_weight = torch.tensor([self.obj_pos_weight], device=pred_obj.device)
+        loss_obj = F.binary_cross_entropy_with_logits(
+            pred_obj, gt_obj, pos_weight=pos_weight, reduction='none')
         return loss_obj
     
 
@@ -88,9 +90,9 @@ class Criterion(object):
         loss_cls = self.loss_classes(pred_cls_pos, gt_classes_pos)
         loss_cls = loss_cls.sum() / num_fgs
 
-        # obj loss
+        # obj loss：对所有 anchor 计算，除以总 anchor 数而非正样本数
         loss_obj = self.loss_objectness(pred_obj, gt_objectness)
-        loss_obj = loss_obj.sum() / num_fgs
+        loss_obj = loss_obj.sum() / pred_obj.numel()
 
         # total loss
         losses = self.loss_obj_weight * loss_obj + \

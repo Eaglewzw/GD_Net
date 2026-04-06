@@ -42,6 +42,215 @@ def collate_fn(batch):
     return images, targets
 
 
+# ==================== 评估工具函数 ====================
+
+def _box_iou_np(box1, box2):
+    """计算两组框的 IoU 矩阵，box1: [N,4], box2: [M,4], 返回 [N,M]"""
+    area1 = (box1[:, 2] - box1[:, 0]) * (box1[:, 3] - box1[:, 1])
+    area2 = (box2[:, 2] - box2[:, 0]) * (box2[:, 3] - box2[:, 1])
+    lt = np.maximum(box1[:, None, :2], box2[:, :2])
+    rb = np.minimum(box1[:, None, 2:], box2[:, 2:])
+    inter = (rb - lt).clip(min=0).prod(axis=2)
+    return inter / (area1[:, None] + area2 - inter + 1e-7)
+
+
+def _compute_ap(recall, precision):
+    """All-points 插值计算 AP"""
+    mrec = np.concatenate(([0.], recall, [1.]))
+    mpre = np.concatenate(([0.], precision, [0.]))
+    for i in range(mpre.size - 1, 0, -1):
+        mpre[i - 1] = max(mpre[i - 1], mpre[i])
+    idx = np.where(mrec[1:] != mrec[:-1])[0]
+    return float(np.sum((mrec[idx + 1] - mrec[idx]) * mpre[idx + 1]))
+
+
+@torch.no_grad()
+def evaluate_and_plot(model, dataloader, device, num_classes, save_dir, class_names=None):
+    """
+    在训练集上跑一遍推理，计算每类的 Precision / Recall / F1 / AP@0.5，
+    并保存 PR 曲线 + F1 曲线 + 指标汇总表图像。
+    """
+    model.eval()
+    model.trainable = False   # 切换到推理分支，返回 {bboxes, scores, labels}
+    iou_thres = 0.5
+    stats = []   # list of (correct[bool], conf, pred_cls, gt_cls)
+
+    for imgs, targets in tqdm(dataloader, desc="Evaluating", leave=False):
+        imgs = imgs.to(device)
+        for b_idx in range(imgs.shape[0]):
+            x = imgs[b_idx:b_idx + 1]
+            outputs = model(x)
+
+            bboxes     = outputs['bboxes']      # np [N,4]
+            scores     = outputs['scores']      # np [N]
+            pred_lbls  = outputs['labels']      # np [N]
+
+            gt_boxes  = targets[b_idx]['boxes'].numpy()   # [M,4]
+            gt_labels = targets[b_idx]['labels'].numpy()  # [M]
+
+            npr = len(bboxes)
+            nl  = len(gt_boxes)
+            correct = np.zeros((npr,), dtype=bool)
+
+            if npr == 0:
+                if nl:
+                    stats.append((correct, np.array([]), np.array([]), gt_labels))
+                continue
+
+            if nl:
+                iou = _box_iou_np(bboxes, gt_boxes)          # [N, M]
+                matched_gt = set()
+                for pi in range(npr):
+                    best_iou, best_gi = -1, -1
+                    for gi in range(nl):
+                        if gi in matched_gt:
+                            continue
+                        if iou[pi, gi] > best_iou:
+                            best_iou, best_gi = iou[pi, gi], gi
+                    if best_iou >= iou_thres and pred_lbls[pi] == gt_labels[best_gi]:
+                        correct[pi] = True
+                        matched_gt.add(best_gi)
+
+            stats.append((correct, scores, pred_lbls, gt_labels))
+
+    if not stats:
+        logger.warning("评估：没有收集到任何统计数据，跳过绘图。")
+        model.train()
+        return
+
+    all_correct  = np.concatenate([s[0] for s in stats])
+    all_conf     = np.concatenate([s[1] for s in stats])
+    all_pred_cls = np.concatenate([s[2] for s in stats])
+    all_gt_cls   = np.concatenate([s[3] for s in stats])
+
+    # 按置信度降序排列
+    sort_idx    = np.argsort(-all_conf)
+    all_correct  = all_correct[sort_idx]
+    all_conf     = all_conf[sort_idx]
+    all_pred_cls = all_pred_cls[sort_idx]
+
+    unique_classes = np.unique(all_gt_cls).astype(int)
+    if class_names is None:
+        class_names = {c: f"class_{c}" for c in unique_classes}
+
+    results = {}   # cls_id -> {p_curve, r_curve, f1_curve, ap, conf_curve}
+    for c in unique_classes:
+        mask  = all_pred_cls == c
+        n_gt  = int((all_gt_cls == c).sum())
+        n_p   = int(mask.sum())
+
+        if n_p == 0 or n_gt == 0:
+            results[c] = dict(p=0., r=0., f1=0., ap=0.,
+                              p_curve=np.array([0., 1.]),
+                              r_curve=np.array([0., 0.]),
+                              f1_curve=np.array([0., 0.]),
+                              conf_curve=np.array([1., 0.]))
+            continue
+
+        tp = all_correct[mask].astype(float)
+        fp = 1.0 - tp
+        conf_c = all_conf[mask]
+
+        tpc = tp.cumsum()
+        fpc = fp.cumsum()
+        recall_c    = tpc / (n_gt + 1e-16)
+        precision_c = tpc / (tpc + fpc + 1e-16)
+        f1_c        = 2 * precision_c * recall_c / (precision_c + recall_c + 1e-16)
+
+        ap = _compute_ap(recall_c, precision_c)
+        best_i = int(f1_c.argmax())
+
+        results[c] = dict(
+            p=float(precision_c[best_i]),
+            r=float(recall_c[best_i]),
+            f1=float(f1_c[best_i]),
+            ap=ap,
+            p_curve=precision_c,
+            r_curve=recall_c,
+            f1_curve=f1_c,
+            conf_curve=conf_c,
+        )
+
+    # ---- 绘图 ----
+    n_cls  = len(unique_classes)
+    colors = plt.cm.tab10(np.linspace(0, 1, max(n_cls, 1)))
+
+    fig, axes = plt.subplots(1, 3, figsize=(18, 5), tight_layout=True)
+
+    # -- PR 曲线 --
+    ax = axes[0]
+    for i, c in enumerate(unique_classes):
+        r = results[c]
+        name = class_names.get(int(c), f"cls_{c}")
+        ax.plot(r['r_curve'], r['p_curve'],
+                color=colors[i], linewidth=2,
+                label=f"{name} AP={r['ap']:.3f}")
+    ax.set_xlabel('Recall')
+    ax.set_ylabel('Precision')
+    ax.set_title('Precision-Recall Curve')
+    ax.set_xlim(0, 1); ax.set_ylim(0, 1.05)
+    ax.legend(loc='lower left', fontsize=8)
+    ax.grid(True, linestyle='--', alpha=0.5)
+
+    # -- F1 曲线 --
+    ax = axes[1]
+    for i, c in enumerate(unique_classes):
+        r = results[c]
+        name = class_names.get(int(c), f"cls_{c}")
+        ax.plot(r['conf_curve'], r['f1_curve'],
+                color=colors[i], linewidth=2,
+                label=f"{name} F1={r['f1']:.3f}")
+    ax.set_xlabel('Confidence Threshold')
+    ax.set_ylabel('F1 Score')
+    ax.set_title('F1-Confidence Curve')
+    ax.set_xlim(0, 1); ax.set_ylim(0, 1.05)
+    ax.legend(loc='upper right', fontsize=8)
+    ax.grid(True, linestyle='--', alpha=0.5)
+
+    # -- 指标汇总表 --
+    ax = axes[2]
+    ax.axis('off')
+    col_labels = ['Class', 'Precision', 'Recall', 'F1', 'AP@0.5']
+    table_data = []
+    for c in unique_classes:
+        r = results[c]
+        name = class_names.get(int(c), f"cls_{c}")
+        table_data.append([
+            name,
+            f"{r['p']:.4f}",
+            f"{r['r']:.4f}",
+            f"{r['f1']:.4f}",
+            f"{r['ap']:.4f}",
+        ])
+    # 均值行
+    mean_p  = np.mean([results[c]['p']  for c in unique_classes])
+    mean_r  = np.mean([results[c]['r']  for c in unique_classes])
+    mean_f1 = np.mean([results[c]['f1'] for c in unique_classes])
+    mean_ap = np.mean([results[c]['ap'] for c in unique_classes])
+    table_data.append(['mean', f"{mean_p:.4f}", f"{mean_r:.4f}",
+                        f"{mean_f1:.4f}", f"{mean_ap:.4f}"])
+
+    tbl = ax.table(cellText=table_data, colLabels=col_labels,
+                   loc='center', cellLoc='center')
+    tbl.auto_set_font_size(False)
+    tbl.set_fontsize(10)
+    tbl.scale(1.2, 1.8)
+    # 加粗均值行
+    last_row = len(table_data)
+    for col in range(len(col_labels)):
+        tbl[last_row, col].set_facecolor('#d0e8ff')
+    ax.set_title('Metrics Summary', fontsize=12, pad=12)
+
+    save_path = os.path.join(save_dir, "eval_metrics.png")
+    fig.savefig(save_path, dpi=150)
+    plt.close(fig)
+    logger.info(f"评估图表已保存至 {save_path}")
+    logger.info(f"  mAP@0.5={mean_ap:.4f}  P={mean_p:.4f}  R={mean_r:.4f}  F1={mean_f1:.4f}")
+
+    model.trainable = True
+    model.train()
+
+
 def load_data_cfg(yaml_path):
     """从 yaml 文件读取数据集配置，返回 (data_root, num_classes, class_mapping)"""
     with open(yaml_path, 'r') as f:
@@ -213,6 +422,22 @@ def main():
                        os.path.join(args.save_dir, "best_yolov3_mcu.pth"))
 
     logger.info(f"训练完成！最佳模型在 epoch {best_epoch}，loss={best_loss:.4f}")
+
+    # ------------------- 加载最优权重评估 -------------------
+    best_ckpt = os.path.join(args.save_dir, "best_yolov3_mcu.pth")
+    if os.path.exists(best_ckpt):
+        logger.info("加载最佳权重进行评估...")
+        model.load_state_dict(torch.load(best_ckpt, map_location=device))
+
+    # 读取类别名
+    class_names_map = None
+    if args.data:
+        with open(args.data, 'r') as f:
+            _d = yaml.safe_load(f)
+        class_names_map = _d.get('names', None)   # {0: 'car', ...}
+
+    evaluate_and_plot(model, dataloader, device, num_classes,
+                      args.save_dir, class_names=class_names_map)
 
     # ------------------- 绘图 -------------------
     plots_data = [
