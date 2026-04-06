@@ -61,7 +61,7 @@ def load_data_cfg(yaml_path):
 def parse_args():
     parser = argparse.ArgumentParser(description="YOLOv3-McuNet Training")
     # 数据集配置 yaml（优先级高于 --data-root / --num-classes）
-    parser.add_argument('--data', type=str, default='/home/verser/Python/GD_Net/data/udacity.yaml',
+    parser.add_argument('--data', type=str, default='/home/verser/Python/GD_Net/data/standford.yaml',
                         help='数据集配置文件，如 data/udacity.yaml')
     # 兼容旧用法（当未指定 --data 时生效）
     parser.add_argument('--data-root', type=str,
@@ -73,12 +73,13 @@ def parse_args():
                         help='模型保存目录')
     # 预训练权重路径（可选）
     parser.add_argument('--pretrained', type=str,
-                        default='',
+                        default='/home/verser/Python/GD_Net/checkpoints/best_yolov3_mcu.pth',
                         help='预训练权重路径，留空则从头训练')
     # 训练超参数
-    parser.add_argument('--epochs', type=int, default=100)
-    parser.add_argument('--batch-size', type=int, default=128)
-    parser.add_argument('--img-size', type=int, default=160)
+    parser.add_argument('--epochs', type=int, default=500)
+    parser.add_argument('--batch-size', type=int, default=64)
+    # 必须是32的倍数, cfg.py中max_stride: 32，特征图需要整除
+    parser.add_argument('--img-size', type=int, default=320)  #必须是32的倍数
     parser.add_argument('--num-classes', type=int, default=5,
                         help='类别数（--data 未指定时使用）')
     parser.add_argument('--lr', type=float, default=0.012)

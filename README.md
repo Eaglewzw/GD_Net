@@ -123,3 +123,141 @@ cfg['lsnet_type']    = 'lsnet_t'  # 或 'lsnet_s' / 'lsnet_b'
 <div align="center">
   <img src="./assets/results_yolo_style.png" alt="无人机拦截框架" width="80%">
 </div>
+
+---
+
+## 📁 Dataset Format
+
+本项目使用 **PASCAL VOC 格式**数据集，目录结构如下：
+
+```
+MyDataset/
+├── JPEGImages/          # 原始图像（.jpg / .jpeg / .png）
+├── Annotations/         # XML 标注文件（PASCAL VOC 格式）
+└── ImageSets/
+    └── Main/
+        ├── train.txt    # 训练集文件名列表（不含扩展名）
+        ├── val.txt      # 验证集文件名列表
+        └── trainval.txt # 可选，训练+验证合并列表
+```
+
+### XML 标注格式示例
+
+```xml
+<annotation>
+  <filename>000001.jpg</filename>
+  <size>
+    <width>1920</width>
+    <height>1080</height>
+  </size>
+  <object>
+    <name>car</name>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>100</xmin>
+      <ymin>200</ymin>
+      <xmax>400</xmax>
+      <ymax>500</ymax>
+    </bndbox>
+  </object>
+</annotation>
+```
+
+### 数据集配置文件
+
+在 `data/` 目录下为每个数据集创建一个 YAML 配置文件：
+
+```yaml
+# data/mydataset.yaml
+
+# 数据集根目录（含 JPEGImages/ 和 Annotations/）
+path: /path/to/MyDataset
+
+# 类别列表（顺序即为 class id: 0, 1, 2, ...）
+names:
+  0: car
+  1: truck
+  2: pedestrian
+
+# 原始标注名 → 类别 id 的完整映射（处理别名/大小写变体）
+class_mapping:
+  car: 0
+  Car: 0
+  truck: 1
+  Truck: 1
+  pedestrian: 2
+```
+
+> `class_mapping` 用于处理标注中类名大小写不一致或存在别名的情况，`names` 用于可视化显示。
+
+---
+
+## 🚀 Training
+
+### 1. 环境安装
+
+```bash
+pip install torch torchvision tqdm pyyaml opencv-python
+```
+
+### 2. 准备数据集
+
+按照上方 [Dataset Format](#-dataset-format) 组织数据，并在 `data/` 目录下创建对应的 YAML 配置文件。
+
+### 3. 开始训练
+
+```bash
+python train.py --data data/mydataset.yaml
+```
+
+**常用参数：**
+
+| 参数 | 默认值 | 说明 |
+| :--- | :---: | :--- |
+| `--data` | `data/bvehicle.yaml` | 数据集配置文件路径 |
+| `--img-size` | `160` | 训练输入分辨率（须为 32 的倍数） |
+| `--epochs` | `1000` | 训练轮数 |
+| `--batch-size` | `256` | 批大小 |
+| `--lr` | `0.012` | 初始学习率 |
+| `--pretrained` | *(空)* | 预训练权重路径，留空则从头训练 |
+| `--save-dir` | `./checkpoints` | 模型保存目录 |
+| `--device` | `0` | CUDA 设备编号 |
+
+**示例：**
+
+```bash
+# 使用预训练权重，输入分辨率 320
+python train.py \
+  --data data/bvehicle.yaml \
+  --img-size 320 \
+  --batch-size 64 \
+  --epochs 300 \
+  --pretrained checkpoints/best_yolov3_mcu.pth
+```
+
+### 4. 输入分辨率建议
+
+| 目标在原图中的尺寸 | 建议 `--img-size` |
+| :--- | :---: |
+| 占画面 >30%（近距离大目标） | `160` |
+| 占画面 10%~30% | `320` |
+| 占画面 <10%（小目标/远距离） | `640` |
+
+> **注意**：`--img-size` 必须是 32 的倍数，且应与所选 backbone 的设计分辨率对齐（见 [Backbone Zoo](#-backbone-zoo)）。
+
+### 5. 切换主干网络
+
+在 `cfg.py` 中修改 `backbone_type`，然后在 `gd_net/backbone_mcunet.py` 的 `MODEL_ZOO` 中确认模型路径：
+
+```python
+# cfg.py
+cfg['backbone_type'] = 'mcunet'   # 'mcunet' | 'lsnet'
+```
+
+---
+
+## 🔍 Inference
+
+```bash
+python predict.py --data data/mydataset.yaml --img path/to/image.jpg
+```

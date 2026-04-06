@@ -8,13 +8,11 @@ import torch.utils.data as data
 try:
     from .gd_net.augment_strong import MosaicAugment, MixupAugment
 except:
-    from  gd_net.augment_strong import MosaicAugment, MixupAugment
-
+    from gd_net.augment_strong import MosaicAugment, MixupAugment
 
 # VOC class names
 # VOC_CLASSES = ('aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor')
 VOC_CLASSES = ('drone',)
-
 
 
 class VOCAnnotationTransform(object):
@@ -65,13 +63,13 @@ class VOCAnnotationTransform(object):
 
 
 class VOCDataset(data.Dataset):
-    def __init__(self, 
-                 img_size     :int = 640,
-                 data_dir     :str = None,
-                 image_sets   = ['trainval', 'train'],
-                 trans_config = None,
-                 transform    = None,
-                 is_train     :bool = False,
+    def __init__(self,
+                 img_size: int = 640,
+                 data_dir: str = None,
+                 image_sets=['trainval', 'train'],
+                 trans_config=None,
+                 transform=None,
+                 is_train: bool = False,
                  ):
         # ----------- Basic parameters -----------
         self.img_size = img_size
@@ -89,7 +87,6 @@ class VOCDataset(data.Dataset):
         #     for line in open(osp.join(rootpath, 'ImageSets', 'Main', name + '.txt')):
         #         self.ids.append((rootpath, line.strip()))
 
-
         for name in image_sets:  # 只遍历数据集划分名称
             rootpath = self.root  # 直接使用根目录
             for line in open(osp.join(rootpath, 'ImageSets', 'Main', name + '.txt')):
@@ -102,14 +99,14 @@ class VOCDataset(data.Dataset):
         # ----------- Strong augmentation -----------
         if is_train:
             self.mosaic_prob = trans_config['mosaic_prob'] if trans_config else 0.0
-            self.mixup_prob  = trans_config['mixup_prob']  if trans_config else 0.0
+            self.mixup_prob = trans_config['mixup_prob'] if trans_config else 0.0
             self.mosaic_augment = MosaicAugment(img_size, trans_config, is_train) if self.mosaic_prob > 0. else None
-            self.mixup_augment  = MixupAugment(img_size, trans_config)            if self.mixup_prob > 0.  else None
+            self.mixup_augment = MixupAugment(img_size, trans_config) if self.mixup_prob > 0. else None
         else:
             self.mosaic_prob = 0.0
-            self.mixup_prob  = 0.0
+            self.mixup_prob = 0.0
             self.mosaic_augment = None
-            self.mixup_augment  = None
+            self.mixup_augment = None
         print('==============================')
         print('use Mosaic Augmentation: {}'.format(self.mosaic_prob))
         print('use Mixup Augmentation: {}'.format(self.mixup_prob))
@@ -126,7 +123,7 @@ class VOCDataset(data.Dataset):
     def load_mosaic(self, index):
         # ------------ Prepare 4 indexes of images ------------
         ## Load 4x mosaic image
-        index_list = np.arange(index).tolist() + np.arange(index+1, len(self.ids)).tolist()
+        index_list = np.arange(index).tolist() + np.arange(index + 1, len(self.ids)).tolist()
         id1 = index
         id2, id3, id4 = random.sample(index_list, 3)
         indexs = [id1, id2, id3, id4]
@@ -152,12 +149,12 @@ class VOCDataset(data.Dataset):
         elif self.mixup_augment.mixup_type == 'yolox':
             new_index = np.random.randint(0, len(self.ids))
             new_image, new_target = self.load_image_target(new_index)
-            
+
         # ------------ Mixup augmentation ------------
         image, target = self.mixup_augment(origin_image, origin_target, new_image, new_target)
 
         return image, target
-    
+
     # ------------ Load data function ------------
     def load_image_target(self, index):
         # load an image
@@ -174,7 +171,7 @@ class VOCDataset(data.Dataset):
             "labels": anno[:, 4],
             "orig_size": [height, width]
         }
-        
+
         return image, target
 
     def pull_item(self, index):
@@ -214,7 +211,7 @@ if __name__ == "__main__":
     import time
     import argparse
     from build import build_transform
-    
+
     parser = argparse.ArgumentParser(description='VOC-Dataset')
 
     # opt
@@ -234,13 +231,13 @@ if __name__ == "__main__":
                         help='mixup augmentation.')
     parser.add_argument('--is_train', action="store_true", default=False,
                         help='mixup augmentation.')
-    
+
     args = parser.parse_args()
 
     trans_config = {
-        'aug_type': args.aug_type,    # optional: ssd, yolov5
+        'aug_type': args.aug_type,  # optional: ssd, yolov5
         'pixel_mean': [123.675, 116.28, 103.53],
-        'pixel_std':  [58.395, 57.12, 57.375],
+        'pixel_std': [58.395, 57.12, 57.375],
         'use_ablu': True,
         # Basic Augment
         'affine_params': {
@@ -256,14 +253,14 @@ if __name__ == "__main__":
         # Mosaic & Mixup
         'mosaic_keep_ratio': False,
         'mosaic_prob': args.mosaic,
-        'mixup_prob':  args.mixup,
+        'mixup_prob': args.mixup,
         'mosaic_type': 'yolov5',
-        'mixup_type':  'yolov5',
+        'mixup_type': 'yolov5',
         'mixup_scale': [0.5, 1.5]
     }
     transform, trans_cfg = build_transform(args, trans_config, 32, args.is_train)
     pixel_mean = transform.pixel_mean
-    pixel_std  = transform.pixel_std
+    pixel_std = transform.pixel_std
     color_format = transform.color_format
 
     dataset = VOCDataset(
@@ -273,8 +270,8 @@ if __name__ == "__main__":
         trans_config=trans_config,
         transform=transform,
         is_train=args.is_train,
-        )
-    
+    )
+
     np.random.seed(0)
     class_colors = [(np.random.randint(255),
                      np.random.randint(255),
@@ -288,7 +285,7 @@ if __name__ == "__main__":
 
         # to numpy
         image = image.permute(1, 2, 0).numpy()
-        
+
         # denormalize
         image = image * pixel_std + pixel_mean
         if color_format == 'rgb':

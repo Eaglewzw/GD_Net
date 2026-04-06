@@ -1,0 +1,25 @@
+# Udacity Self-Driving Car Dataset
+# 用法: python train.py --data data/udacity.yaml
+
+# 数据集根目录（含 JPEGImages/ 和 Annotations/）
+path: /media/verser/robot/Dataset/vehicle-detection
+
+# 类别列表（顺序即为 class id: 0, 1, 2, ...）
+names:
+  0: motorbike
+  1: bus
+  2: pickup-van
+  3: microbus
+  4: truck
+  5: car
+
+
+# 原始标注名 → 类别 id 的完整映射（处理别名/变体）
+class_mapping:
+  motorbike: 0
+  bus: 1
+  pickup-van: 2
+  microbus: 3
+  truck: 4
+  car: 5
+

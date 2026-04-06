@@ -4,6 +4,7 @@ import numpy as np
 import os.path as osp
 import xml.etree.ElementTree as ET
 import torch.utils.data as data
+import yaml
 
 try:
     from .gd_net.augment_strong import MosaicAugment, MixupAugment
@@ -11,51 +12,46 @@ except:
     from  gd_net.augment_strong import MosaicAugment, MixupAugment
 
 
-# VOC class names
-# VOC_CLASSES = ('aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor')
-VOC_CLASSES = ('drone',)
-
+def load_data_cfg(yaml_path):
+    """从 yaml 文件读取数据集配置，返回 (data_root, class_names, class_mapping)"""
+    with open(yaml_path, 'r') as f:
+        data = yaml.safe_load(f)
+    data_root     = data['path']
+    names         = data.get('names', {})
+    class_mapping = data.get('class_mapping', {})
+    # names 是 {id: name} 字典，转为按 id 排序的 tuple
+    class_names = tuple(names[i] for i in sorted(names.keys()))
+    return data_root, class_names, class_mapping
 
 
 class VOCAnnotationTransform(object):
     """Transforms a VOC annotation into a Tensor of bbox coords and label index
-    Initilized with a dictionary lookup of classnames to indexes
     Arguments:
-        class_to_ind (dict, optional): dictionary lookup of classnames -> indexes
-            (default: alphabetic indexing of VOC's 20 classes)
-        keep_difficult (bool, optional): keep difficult instances or not
-            (default: False)
-        height (int): height
-        width (int): width
+        class_to_ind (dict): classname -> index 映射，来自 yaml class_mapping
+        keep_difficult (bool): 是否保留 difficult 样本
     """
 
-    def __init__(self, class_to_ind=None, keep_difficult=False):
-        self.class_to_ind = class_to_ind or dict(
-            zip(VOC_CLASSES, range(len(VOC_CLASSES))))
+    def __init__(self, class_to_ind, keep_difficult=False):
+        self.class_to_ind = class_to_ind
         self.keep_difficult = keep_difficult
 
     def __call__(self, target):
-        """
-        Arguments:
-            target (annotation) : the target annotation to be made usable
-                will be an ET.Element
-        Returns:
-            a list containing lists of bounding boxes  [bbox coords, class name]
-        """
         res = []
         for obj in target.iter('object'):
-            difficult = int(obj.find('difficult').text) == 1
+            difficult_node = obj.find('difficult')
+            difficult = int(difficult_node.text) == 1 if difficult_node is not None else False
             if not self.keep_difficult and difficult:
                 continue
-            name = obj.find('name').text.lower().strip()
+            name = obj.find('name').text.strip()
+            if name not in self.class_to_ind:
+                print(f"[Warning] Unknown class '{name}', skipped.")
+                continue
             bbox = obj.find('bndbox')
 
             pts = ['xmin', 'ymin', 'xmax', 'ymax']
             bndbox = []
             for i, pt in enumerate(pts):
                 cur_pt = int(bbox.find(pt).text) - 1
-                # scale height or width
-                cur_pt = cur_pt if i % 2 == 0 else cur_pt
                 bndbox.append(cur_pt)
             label_idx = self.class_to_ind[name]
             bndbox.append(label_idx)
@@ -68,6 +64,7 @@ class VOCDataset(data.Dataset):
     def __init__(self,
                  img_size     :int = 640,
                  data_dir     :str = None,
+                 data         :str = None,
                  image_sets   = ['trainval', 'train'],
                  trans_config = None,
                  transform    = None,
@@ -77,9 +74,26 @@ class VOCDataset(data.Dataset):
         self.img_size = img_size
         self.image_set = image_sets
         self.is_train = is_train
-        self.target_transform = VOCAnnotationTransform()
+
+        # ----------- 数据集配置：优先从 yaml 读取 -----------
+        if data is not None:
+            data_root, class_names, class_mapping = load_data_cfg(data)
+            print(f"[VOCDataset] 加载配置: {data}")
+            print(f"[VOCDataset] 数据路径: {data_root}")
+            print(f"[VOCDataset] 类别 ({len(class_names)}): {class_names}")
+        else:
+            # 兼容旧用法：data_dir 直接传入，类别沿用固定的 drone
+            data_root   = data_dir
+            class_names = ('drone',)
+            class_mapping = {'drone': 0}
+            print(f"[VOCDataset] 未指定 yaml，使用默认类别: {class_names}")
+
+        self.class_names  = class_names
+        self.class_mapping = class_mapping
+        self.target_transform = VOCAnnotationTransform(class_to_ind=class_mapping)
+
         # ----------- Path parameters -----------
-        self.root = data_dir
+        self.root = data_root
         self._annopath = osp.join('%s', 'Annotations', '%s.xml')
         self._imgpath = osp.join('%s', 'JPEGImages', '%s.jpg')
         # ----------- Data parameters -----------
@@ -92,7 +106,11 @@ class VOCDataset(data.Dataset):
 
         for name in image_sets:  # 只遍历数据集划分名称
             rootpath = self.root  # 直接使用根目录
-            for line in open(osp.join(rootpath, 'ImageSets', 'Main', name + '.txt')):
+            txt_path = osp.join(rootpath, 'ImageSets', 'Main', name + '.txt')
+            if not osp.exists(txt_path):
+                print(f"[VOCDataset] 跳过不存在的划分文件: {txt_path}")
+                continue
+            for line in open(txt_path):
                 self.ids.append((rootpath, line.strip()))
         self.dataset_size = len(self.ids)
 
@@ -218,10 +236,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='VOC-Dataset')
 
     # opt
-    parser.add_argument('--root', default='/home/verser/Downloads/Drone_25k/MobileNet_Dataset',
-                        help='data root')
-    # parser.add_argument('--root', default='/media/verse/roboot1/dataset/uav_voc/voc_dataset',
-    #                     help='data root')
+    parser.add_argument('--data', default='../data/standford.yaml',
+                        help='数据集配置 yaml（data/目录下）')
     parser.add_argument('-size', '--img_size', default=640, type=int,
                         help='input image size.')
     parser.add_argument('--aug_type', type=str, default='ssd',
@@ -268,8 +284,8 @@ if __name__ == "__main__":
 
     dataset = VOCDataset(
         img_size=args.img_size,
-        data_dir=args.root,
-        image_sets=['trainval'],
+        data=args.data,
+        image_sets=['trainval', 'train'],
         trans_config=trans_config,
         transform=transform,
         is_train=args.is_train,
@@ -278,7 +294,7 @@ if __name__ == "__main__":
     np.random.seed(0)
     class_colors = [(np.random.randint(255),
                      np.random.randint(255),
-                     np.random.randint(255)) for _ in range(20)]
+                     np.random.randint(255)) for _ in range(len(dataset.class_names))]
     print('Data length: ', len(dataset))
 
     for i in range(1000):
@@ -308,11 +324,8 @@ if __name__ == "__main__":
             if x2 - x1 > 1 and y2 - y1 > 1:
                 cls_id = int(label)
                 color = class_colors[cls_id]
-                # class name
-                label = VOC_CLASSES[cls_id]
+                cls_name = dataset.class_names[cls_id]
                 image = cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
-                # put the test on the bbox
-                cv2.putText(image, label, (int(x1), int(y1 - 5)), 0, 0.5, color, 1, lineType=cv2.LINE_AA)
+                cv2.putText(image, cls_name, (int(x1), int(y1 - 5)), 0, 0.5, color, 1, lineType=cv2.LINE_AA)
         cv2.imshow('gt', image)
-        # cv2.imwrite(str(i)+'.jpg', img)
         cv2.waitKey(0)
