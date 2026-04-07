@@ -242,8 +242,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="YOLOv3-MCUNet Detection")
 
     # 默认路径配置
-    default_video = '/media/verser/robot/Dataset/GDUT_UAV_Video/02_Val_Video/videos/gdut_mav_01.mp4'
-    default_img = '/home/verser/Pictures/00019.jpg'  # 你可以改成你的测试图片路径
+    default_video = '/home/verser/Videos/2.mp4'
+    default_img = '/media/verser/robot/Dataset/standford_car/JPEGImages/00159.jpg'  # 你可以改成你的测试图片路径
     default_weights = './checkpoints/best_yolov3_mcu.pth'
 
     parser.add_argument('--source', type=str, default=default_img, help='Path to image or video file')

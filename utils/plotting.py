@@ -11,7 +11,7 @@ def plot_bbox_labels(img, bbox, label=None, cls_color=None, text_scale=0.4):
     x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
     t_size = cv2.getTextSize(label, 0, fontScale=1, thickness=2)[0]
     # plot bbox
-    cv2.rectangle(img, (x1, y1), (x2, y2), cls_color, 2)
+    cv2.rectangle(img, (x1, y1), (x2, y2), cls_color, 4)
     
     if label is not None:
         # plot title bbox
@@ -23,7 +23,7 @@ def plot_bbox_labels(img, bbox, label=None, cls_color=None, text_scale=0.4):
 
 ## Visualize the detection results
 def visualize(image, bboxes, scores, labels, class_colors, class_names, class_indexs):
-    ts = 0.4
+    ts = 0.8
     for i, bbox in enumerate(bboxes):
         cls_id = int(labels[i])
         cls_color = class_colors[cls_id]

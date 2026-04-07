@@ -1,19 +1,23 @@
 """
-predict_onnx.py  ── 使用导出的 ONNX 模型对图片或视频做推理
+predict_tflite.py  ── 使用 TFLite 模型对图片或视频做推理
 
-ONNX 模型输出格式（deploy 模式）：[N_anchors, 4+C]
+TFLite 模型输出格式（与 ONNX deploy 模式一致）：[N_anchors, 4+C]
     前 4 列: x1 y1 x2 y2（letterbox 坐标系）
-    后 C 列: 每类的联合置信度 sqrt(obj * cls)
+    后 C 列: 每类联合置信度 sqrt(obj * cls)
+
+    注意 INT8 量化模型输出为 int8，推理时自动反量化为 float32。
 
 用法（图片）：
-    python predict_onnx.py --source path/to/img.jpg \
-        --onnx ./checkpoints/yolov3_mcu.onnx \
-        --img-size 320 --num-classes 1
+    CUDA_VISIBLE_DEVICES="" python predict_tflite.py \
+        --source path/to/img.jpg \
+        --tflite ./checkpoints/yolov3_mcu.tflite \
+        --data data/standford.yaml
 
 用法（视频）：
-    python predict_onnx.py --source path/to/video.mp4 \
-        --onnx ./checkpoints/yolov3_mcu.onnx \
-        --img-size 320 --num-classes 1
+    CUDA_VISIBLE_DEVICES="" python predict_tflite.py \
+        --source path/to/video.mp4 \
+        --tflite ./checkpoints/yolov3_mcu.tflite \
+        --data data/standford.yaml
 """
 
 import argparse
@@ -23,18 +27,15 @@ from pathlib import Path
 
 import cv2
 import numpy as np
-import onnxruntime as ort
 import yaml
 
+os.environ['CUDA_VISIBLE_DEVICES'] = ''   # TFLite 推理只用 CPU，避免 CUDA 冲突
+
 
 # ──────────────────────────────────────────────────────────────
-#  图像预处理
+#  图像预处理（与 predict_onnx.py 完全一致）
 # ──────────────────────────────────────────────────────────────
 def letterbox(img_bgr, new_shape=320, color=(114, 114, 114)):
-    """
-    保持长宽比缩放 + padding，与 utils/augmentations.py 保持一致。
-    返回: (ndarray [1,3,H,W] float32), ratio, (dw, dh)
-    """
     h, w = img_bgr.shape[:2]
     r = min(new_shape / h, new_shape / w)
     new_w, new_h = int(round(w * r)), int(round(h * r))
@@ -50,15 +51,14 @@ def letterbox(img_bgr, new_shape=320, color=(114, 114, 114)):
                              cv2.BORDER_CONSTANT, value=color)
 
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img = img.transpose(2, 0, 1).astype(np.float32) / 255.0
-    return img[np.newaxis], r, (dw, dh)
+    img = img.astype(np.float32) / 255.0
+    return img[np.newaxis], r, (dw, dh)   # [1, H, W, 3] NHWC
 
 
 # ──────────────────────────────────────────────────────────────
-#  后处理
+#  后处理（与 predict_onnx.py 完全一致）
 # ──────────────────────────────────────────────────────────────
 def nms(boxes, scores, iou_threshold):
-    """纯 numpy NMS，返回 keep 索引列表"""
     x1, y1, x2, y2 = boxes[:, 0], boxes[:, 1], boxes[:, 2], boxes[:, 3]
     areas = (x2 - x1).clip(0) * (y2 - y1).clip(0)
     order = scores.argsort()[::-1]
@@ -77,24 +77,19 @@ def nms(boxes, scores, iou_threshold):
 
 
 def postprocess(raw, ratio, dw, dh, conf_thresh, nms_thresh, num_classes):
-    """
-    raw: [N_anchors, 4+C]  (letterbox 坐标系, 原始分数)
-    返回: bboxes [K,4](原图坐标), scores [K], labels [K]
-    """
-    boxes_lb = raw[:, :4]          # letterbox 坐标
-    cls_scores = raw[:, 4:]        # [N, C]
+    """raw: [N_anchors, 4+C]，letterbox 坐标系"""
+    boxes_lb  = raw[:, :4]
+    cls_scores = raw[:, 4:]
 
     labels = cls_scores.argmax(axis=1)
     scores = cls_scores[np.arange(len(labels)), labels]
 
-    # 置信度过滤
     mask = scores > conf_thresh
     if not mask.any():
         return np.zeros((0, 4)), np.zeros(0), np.zeros(0, dtype=int)
 
     boxes_lb, scores, labels = boxes_lb[mask], scores[mask], labels[mask]
 
-    # 多类 NMS（按类分别做）
     keep_all = []
     for c in np.unique(labels):
         idx = np.where(labels == c)[0]
@@ -105,7 +100,6 @@ def postprocess(raw, ratio, dw, dh, conf_thresh, nms_thresh, num_classes):
     scores   = scores[keep_all]
     labels   = labels[keep_all]
 
-    # 坐标还原到原图
     boxes = boxes_lb.copy()
     boxes[:, [0, 2]] = (boxes[:, [0, 2]] - dw) / ratio
     boxes[:, [1, 3]] = (boxes[:, [1, 3]] - dh) / ratio
@@ -134,42 +128,70 @@ def draw_boxes(img, boxes, scores, labels, class_names):
 
 
 # ──────────────────────────────────────────────────────────────
-#  推理器
+#  TFLite 推理器
 # ──────────────────────────────────────────────────────────────
-class OnnxDetector:
-    def __init__(self, onnx_path, img_size=320, num_classes=1,
-                 conf_thresh=0.25, nms_thresh=0.45,
-                 class_names=None):
-        self.img_size   = img_size
+class TFLiteDetector:
+    def __init__(self, tflite_path, img_size=320, num_classes=1,
+                 conf_thresh=0.25, nms_thresh=0.45, class_names=None):
+        import tensorflow as tf
+
+        self.img_size    = img_size
         self.num_classes = num_classes
         self.conf_thresh = conf_thresh
         self.nms_thresh  = nms_thresh
         self.class_names = class_names or [f'class_{i}' for i in range(num_classes)]
 
-        providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']
-        self.sess = ort.InferenceSession(onnx_path, providers=providers)
-        self.inp  = self.sess.get_inputs()[0].name
-        self.out  = self.sess.get_outputs()[0].name
-        print(f"[OnnxDetector] Loaded: {onnx_path}")
-        print(f"  providers : {self.sess.get_providers()}")
-        print(f"  input     : {self.inp}  {self.sess.get_inputs()[0].shape}")
-        print(f"  output    : {self.out}  {self.sess.get_outputs()[0].shape}")
+        self.interp = tf.lite.Interpreter(model_path=tflite_path)
+        self.interp.allocate_tensors()
+
+        self.inp_detail = self.interp.get_input_details()[0]
+        self.out_detail = self.interp.get_output_details()[0]
+        self.is_int8    = self.inp_detail['dtype'] == np.int8
+
+        print(f"[TFLiteDetector] Loaded: {tflite_path}")
+        print(f"  input : {self.inp_detail['name']}  "
+              f"shape={self.inp_detail['shape']}  dtype={self.inp_detail['dtype']}")
+        print(f"  output: {self.out_detail['name']}  "
+              f"shape={self.out_detail['shape']}  dtype={self.out_detail['dtype']}")
+        print(f"  INT8 mode: {self.is_int8}")
 
         # warmup
-        dummy = np.zeros((1, 3, img_size, img_size), dtype=np.float32)
-        self.sess.run([self.out], {self.inp: dummy})
+        dummy = np.zeros(self.inp_detail['shape'],
+                         dtype=np.int8 if self.is_int8 else np.float32)
+        self.interp.set_tensor(self.inp_detail['index'], dummy)
+        self.interp.invoke()
         print("  warmup done ✓")
 
+    def _quantize_input(self, x_fp32):
+        """FP32 → INT8（仅 INT8 模型使用）"""
+        scale, zp = self.inp_detail['quantization']
+        return (x_fp32 / scale + zp).clip(-128, 127).astype(np.int8)
+
+    def _dequantize_output(self, x_int8):
+        """INT8 → FP32"""
+        scale, zp = self.out_detail['quantization']
+        return (x_int8.astype(np.float32) - zp) * scale
+
     def infer(self, frame_bgr):
-        """
-        单帧推理。
-        返回: vis_frame, boxes [K,4], scores [K], labels [K], infer_ms
-        """
+        # 预处理：返回 NHWC float32
         blob, ratio, (dw, dh) = letterbox(frame_bgr, self.img_size)
 
+        # INT8 模型需要量化输入
+        inp = self._quantize_input(blob) if self.is_int8 else blob
+
         t0 = time.perf_counter()
-        raw = self.sess.run([self.out], {self.inp: blob})[0]   # [N, 4+C]
+        self.interp.set_tensor(self.inp_detail['index'], inp)
+        self.interp.invoke()
+        raw = self.interp.get_tensor(self.out_detail['index'])
         infer_ms = (time.perf_counter() - t0) * 1000
+
+        # INT8 输出反量化
+        if self.is_int8:
+            raw = self._dequantize_output(raw)
+
+        # raw: [1, N_anchors, 4+C] 或 [N_anchors, 4+C]，统一降维
+        if raw.ndim == 3:
+            raw = raw[0]
 
         boxes, scores, labels = postprocess(
             raw, ratio, dw, dh,
@@ -181,7 +203,7 @@ class OnnxDetector:
 
 
 # ──────────────────────────────────────────────────────────────
-#  图片 / 视频 处理
+#  图片 / 视频处理
 # ──────────────────────────────────────────────────────────────
 IMG_EXTS = {'.bmp', '.jpg', '.jpeg', '.png', '.tif', '.tiff', '.webp'}
 VID_EXTS = {'.mov', '.avi', '.mp4', '.mpg', '.mpeg', '.m4v', '.wmv', '.mkv'}
@@ -220,14 +242,14 @@ def run_video(detector, src, save_dir):
     fps_src = cap.get(cv2.CAP_PROP_FPS) or 30.0
     total   = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    dst = os.path.join(save_dir, Path(src).stem + '_onnx.mp4')
+    dst = os.path.join(save_dir, Path(src).stem + '_tflite.mp4')
     writer = cv2.VideoWriter(dst, cv2.VideoWriter_fourcc(*'mp4v'), fps_src, (W, H))
 
     fps_ctr = FPSCounter()
     fid = 0
 
-    cv2.namedWindow('ONNX Detection', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('ONNX Detection', 1280, 720)
+    cv2.namedWindow('TFLite Detection', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('TFLite Detection', 1280, 720)
 
     while True:
         ret, frame = cap.read()
@@ -246,7 +268,7 @@ def run_video(detector, src, save_dir):
                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 200, 0), 2)
 
         writer.write(vis)
-        cv2.imshow('ONNX Detection', vis)
+        cv2.imshow('TFLite Detection', vis)
         print(f"\rFrame {fid}/{total} | FPS {fps_real:.1f} | Det {len(boxes)} | {ms:.1f}ms",
               end='', flush=True)
 
@@ -264,15 +286,15 @@ def run_video(detector, src, save_dir):
 #  CLI
 # ──────────────────────────────────────────────────────────────
 def parse_args():
-    p = argparse.ArgumentParser(description='ONNX Inference')
+    p = argparse.ArgumentParser(description='TFLite Inference')
     p.add_argument('--source', type=str,
                    default='/home/verser/Pictures/00019.jpg')
-    p.add_argument('--onnx', type=str,
-                   default='./checkpoints/yolov3_mcu.onnx')
+    p.add_argument('--tflite', type=str,
+                   default='./checkpoints/yolov3_mcu.tflite')
     p.add_argument('--data', type=str,
                    default='./data/standford.yaml',
                    help='数据集 yaml，自动读取类别数和类别名')
-    p.add_argument('--output', type=str, default='./det_results_onnx/')
+    p.add_argument('--output', type=str, default='./det_results_tflite/')
     p.add_argument('--img-size', type=int, default=320)
     p.add_argument('--conf-thresh', type=float, default=0.25)
     p.add_argument('--nms-thresh', type=float, default=0.45)
@@ -289,8 +311,8 @@ if __name__ == '__main__':
     class_names = [names_dict[i] for i in sorted(names_dict)]
     num_classes = len(class_names)
 
-    detector = OnnxDetector(
-        onnx_path=args.onnx,
+    detector = TFLiteDetector(
+        tflite_path=args.tflite,
         img_size=args.img_size,
         num_classes=num_classes,
         conf_thresh=args.conf_thresh,
