@@ -4,8 +4,8 @@
 
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
 ![PyTorch](https://img.shields.io/badge/PyTorch-1.10%2B-orange)
-![Params](https://img.shields.io/badge/Params-1.04M-brightgreen)
-![FLOPs](https://img.shields.io/badge/FLOPs-480M%40256-green)
+![Params](https://img.shields.io/badge/Params-1.016M-brightgreen)
+![FLOPs](https://img.shields.io/badge/FLOPs-651M%40320-green)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
 **专为微控制器 (MCU) 和资源受限边缘设备设计的极轻量 YOLO 目标检测框架。**
@@ -29,15 +29,15 @@
 
 ## 📊 模型架构与性能
 
-### 性能指标 (@256x256 输入)
+### 性能指标 (@320x320 输入)
 | 指标 | 数值 | 说明 |
 | :--- | :--- | :--- |
-| **参数量 (Params)** | **1.04 M** | 远小于 YOLOv5n (1.9M) |
-| **计算量 (FLOPs)** | **480.04 M** | 极低计算需求 |
-| **磁盘占用** | **4.47 MB** | 适合 Flash 存储受限设备 |
+| **参数量 (Params)** | **1.016 M** | 远小于 YOLOv5n (1.9M) |
+| **计算量 (FLOPs)** | **651.094 M** | 极低计算需求 |
+| **磁盘占用** | **4.90 MB** | 适合 Flash 存储受限设备 |
 | **推理延迟** | ~30ms | 测试于 Jetson Nano (CPU) / 高端 MCU |
 
-> **注**：上述数据基于 `mcunet-512kb-2mb_imagenet` 主干网络。
+> **注**：上述数据基于 `mcunet-vww` 主干网络，由 `val.py` 使用 `thop` 实测。
 
 ---
 

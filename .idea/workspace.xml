@@ -161,7 +161,7 @@
       <workItem from="1775022894997" duration="45724000" />
       <workItem from="1775286567118" duration="32741000" />
       <workItem from="1775476986583" duration="27870000" />
-      <workItem from="1775563467414" duration="2794000" />
+      <workItem from="1775563467414" duration="3506000" />
     </task>
     <servers />
   </component>
@@ -212,7 +212,7 @@
     <SUITE FILE_PATH="coverage/GD_Net$plotting.coverage" NAME="plotting 覆盖结果" MODIFIED="1775548500567" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/GD_Net$cfg.coverage" NAME="cfg 覆盖结果" MODIFIED="1775467774928" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GD_Net$dataset_voc.coverage" NAME="dataset_voc 覆盖结果" MODIFIED="1766030835359" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dataset" />
-    <SUITE FILE_PATH="coverage/GD_Net$val.coverage" NAME="val 覆盖结果" MODIFIED="1775091866463" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GD_Net$val.coverage" NAME="val 覆盖结果" MODIFIED="1775568204751" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GD_Net$onnx_inference.coverage" NAME="onnx_inference 覆盖结果" MODIFIED="1765847843141" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GD_Net$lsnet_backbone.coverage" NAME="lsnet_backbone 覆盖结果" MODIFIED="1767772675323" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gd_net" />
     <SUITE FILE_PATH="coverage/GD_Net$model_detect.coverage" NAME="model_detect 覆盖结果" MODIFIED="1765892522077" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model_test" />
