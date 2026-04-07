@@ -7,10 +7,11 @@
     <list default="true" id="70c332e8-b513-4de1-8b28-ce4bd619d064" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cfg.py" beforeDir="false" afterPath="$PROJECT_DIR$/cfg.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoints/best_yolov3_mcu.pth" beforeDir="false" afterPath="$PROJECT_DIR$/checkpoints/best_yolov3_mcu.pth" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/loss.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoints/best_yolov3_mcu.pth" beforeDir="false" afterPath="$PROJECT_DIR$/checkpoints/yolov3_mcunet-512kb-2mb_imagenet.pth" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoints/eval_metrics.png" beforeDir="false" afterPath="$PROJECT_DIR$/checkpoints/eval_metrics.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoints/results_yolo_style.png" beforeDir="false" afterPath="$PROJECT_DIR$/checkpoints/results_yolo_style.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gd_net/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/predict.py" beforeDir="false" afterPath="$PROJECT_DIR$/predict.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,7 +161,7 @@
       <workItem from="1767929815446" duration="69000" />
       <workItem from="1775022894997" duration="45724000" />
       <workItem from="1775286567118" duration="32741000" />
-      <workItem from="1775476986583" duration="8967000" />
+      <workItem from="1775476986583" duration="14568000" />
     </task>
     <servers />
   </component>
@@ -175,6 +176,11 @@
           <line>27</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/train.py</url>
+          <line>343</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
@@ -185,8 +191,8 @@
     <SUITE FILE_PATH="coverage/GD_Net$gd_backbone_detect.coverage" NAME="gd_backbone_detect 覆盖结果" MODIFIED="1765890590437" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model_test" />
     <SUITE FILE_PATH="coverage/GD_Net$person_tflite.coverage" NAME="person_tflite 覆盖结果" MODIFIED="1765890318874" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model_test" />
     <SUITE FILE_PATH="coverage/GD_Net$yolov3_fpn.coverage" NAME="yolov3_fpn 覆盖结果" MODIFIED="1766476220021" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gd_net" />
-    <SUITE FILE_PATH="coverage/GD_Net$train.coverage" NAME="train 覆盖结果" MODIFIED="1775487510027" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GD_Net$predict.coverage" NAME="predict 覆盖结果" MODIFIED="1775487950929" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GD_Net$train.coverage" NAME="train 覆盖结果" MODIFIED="1775530452373" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GD_Net$predict.coverage" NAME="predict 覆盖结果" MODIFIED="1775526330678" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GD_Net$voc_dataset.coverage" NAME="voc_dataset 覆盖结果" MODIFIED="1775452304459" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dataset" />
     <SUITE FILE_PATH="coverage/GD_Net$test.coverage" NAME="test 覆盖结果" MODIFIED="1767836229723" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GD_Net$mcunet_512kb_2mb_imagenet_backbone.coverage" NAME="mcunet-512kb-2mb_imagenet_backbone 覆盖结果" MODIFIED="1765892822896" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gd_net" />

@@ -35,14 +35,16 @@ class YOLOv3_McuNet(nn.Module):
         self._anchor_cache: dict = {}
 
         # ── Backbone ──
-        backbone_type = cfg.get('backbone_type', 'mcunet')
-        if backbone_type == 'mcunet':
-            self.backbone, feats_dim = build_mcunet_backbone("imagenet")
-        elif backbone_type == 'lsnet':
-            self.backbone, feats_dim = build_lsnet_backbone(
-                cfg.get('lsnet_type', 'lsnet_t'), pretrained=True)
+        backbone = cfg.get('backbone', 'mcunet-imagenet')
+        if backbone.startswith('mcunet-'):
+            model_type = backbone.split('-', 1)[1]   # 'vww' 或 'imagenet'
+            self.backbone, feats_dim = build_mcunet_backbone(model_type)
+        elif backbone.startswith('lsnet-'):
+            lsnet_type = backbone.replace('-', '_')   # 'lsnet-t' -> 'lsnet_t'
+            self.backbone, feats_dim = build_lsnet_backbone(lsnet_type, pretrained=True)
         else:
-            raise ValueError(f"Unknown backbone_type: {backbone_type}")
+            raise ValueError(f"Unknown backbone: '{backbone}'. "
+                             f"Use 'mcunet-vww', 'mcunet-imagenet', 'lsnet-t', 'lsnet-s', 'lsnet-b'")
 
         # ── Neck (SPPF) ──
         self.neck = build_neck(cfg, in_dim=feats_dim[-1], out_dim=feats_dim[-1])

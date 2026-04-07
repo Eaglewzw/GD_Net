@@ -17,8 +17,11 @@ cfg = {
     'nms_thresh': 0.25,
 
     ## Backbone
-    'backbone_type': 'mcunet',   # 'mcunet' | 'lsnet'
-    'lsnet_type': 'lsnet_t',    # 'lsnet_t' | 'lsnet_s' | 'lsnet_b'
+    # 可选值:
+    #   mcunet-vww       -> MCUNet VWW 版
+    #   mcunet-imagenet  -> MCUNet ImageNet 版
+    #   lsnet-t / lsnet-s / lsnet-b  -> LSNet 系列
+    'backbone': 'mcunet-vww',
     'pretrained': True,
     'stride': [8, 16, 32],      # P3, P4, P5
     'width': 1.0,
