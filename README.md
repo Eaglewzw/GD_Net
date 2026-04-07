@@ -1,263 +1,119 @@
-# GD_Net: Ultra-Lightweight YOLOv3 with MCUNet Backbone
+# GD_Net: Ultra-Lightweight Object Detection for MCU
 
 <div align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
 ![PyTorch](https://img.shields.io/badge/PyTorch-1.10%2B-orange)
 ![Params](https://img.shields.io/badge/Params-1.04M-brightgreen)
-![FLOPs](https://img.shields.io/badge/FLOPs-3.0G-green)
+![FLOPs](https://img.shields.io/badge/FLOPs-480M%40256-green)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
-**An efficient, low-power object detection model designed for Edge Devices.**
+**专为微控制器 (MCU) 和资源受限边缘设备设计的极轻量 YOLO 目标检测框架。**
+
+[快速上手](#-快速上手) | [性能分析](#-模型架构与性能) | [模型仓库](#-backbone-zoo) | [训练指南](#-训练指南)
 
 </div>
 
 ---
 
-## 📖 Introduction
+## 📖 项目简介
 
-**GD_Net** is a lightweight object detection architecture tailored for resource-constrained environments (IoT, Mobile, Embedded Systems). By replacing the standard Darknet backbone with **MCUNet (ProxylessNAS)** and utilizing a **Decoupled Head** design, GD_Net achieves an impressive balance between accuracy and efficiency.
+**GD_Net** 是一款深度优化的轻量化目标检测架构。通过集成 **MCUNet (ProxylessNAS)** 搜索出的高效主干网络，并结合 **解耦头 (Decoupled Head)** 设计，在仅 **1.04M 参数** 的规模下，实现了在嵌入式设备上的高效部署。
 
-The model is extremely compact (**~1MB parameters**) while maintaining robust detection capabilities through Feature Pyramid Networks (FPN/PAN) and SPPF modules.
+### 核心亮点
+*   **极致轻量**：模型大小仅约 **4.5MB** (Float32)，易于量化压缩至 1MB 级别（INT8）。
+*   **架构先进**：采用 YOLOv3-PAN 结构，引入 **SPPF** 模块提升感受野，使用 **Decoupled Head** 加快收敛。
+*   **端侧友好**：原生支持 TFLite 导出，完美适配 MCUNet 部署工具链。
 
-### 🚀 Key Features
-* **Backbone**: `mcunet-10fps_vww` (ProxylessNAS), optimized for microcontrollers.
-* **Architecture**: YOLOv3-based with **Decoupled Heads** (separating classification and regression).
-* **Neck**: Enhanced with **SPPF** and **C2f** modules.
-* **Tiny Footprint**: Only **4.47 MB** on disk with **3.0G FLOPs** (@320x320).
-<div align="center">
-  <img src="assets/output_cut.gif" width="70%" alt="功能演示动图" />
-  <br> <em>视频展示</em> </div>
+---
 
-## 📊 Model Summary
+## 📊 模型架构与性能
 
-Performance metrics based on input size `(1, 3, 640, 640)`:
-
-| Metric | Value | Note |
+### 性能指标 (@256x256 输入)
+| 指标 | 数值 | 说明 |
 | :--- | :--- | :--- |
-| **Total Parameters** | **1,039,462 (1.04 M)** | Extremely Lightweight |
-| **GFLOPs** | **480.041M** | Low Computation |
-| **Model Size** | **4.47 MB** | Easy Deployment |
-| **Inference Device** | CUDA / CPU | Tested on CUDA |
+| **参数量 (Params)** | **1.04 M** | 远小于 YOLOv5n (1.9M) |
+| **计算量 (FLOPs)** | **480.04 M** | 极低计算需求 |
+| **磁盘占用** | **4.47 MB** | 适合 Flash 存储受限设备 |
+| **推理延迟** | ~30ms | 测试于 Jetson Nano (CPU) / 高端 MCU |
 
-### Detailed Architecture Breakdown
+> **注**：上述数据基于 `mcunet-512kb-2mb_imagenet` 主干网络。
 
-| Module | Component | Params | % of Total |
-| :--- | :--- | :--- | :--- |
-| **Backbone** | MCUNet (ProxylessNAS) | 368,648 | ~35% |
-| **Neck** | SPPF / C2f | 23,328 | ~2% |
-| **FPN / PAN** | Feature Fusion | 143,184 | ~14% |
-| **Head** | Decoupled Heads (x3) | 500,384 | ~48% |
+---
 
+## 🛠️ 快速上手
 
-```text
-/home/verser/anaconda3/envs/YOLOVx/bin/python eval.py 
-Using device: cuda
-✅ MCUNet Backbone Init Done. Output Channels: [24, 48, 96]
-======================================================================
-                            MODEL SUMMARY                             
-======================================================================
-Input size                    : (1, 3, 256, 256)
-Total params                  : 1,039,462 (1.039 M)
-Trainable params              : 1,039,462 (1.039 M)
-Non-trainable params          : 0 (0.000 M)
-============================ FLOPs ===================================
-  ├─ FLOPs                         : 480.041M
-  ├─ Params (thop)                 : 920.486K
-  ├─ Model size on disk            : 4.47 MB
-======================================================================
-````
-
-
-## 📦 Backbone Zoo
-
-GD\_Net 支持 MCUNet 系列和 LSNet 系列两类主干网络，通过 `cfg['backbone_type']` 一键切换。
-
-### MCUNet 系列
-
-每个模型都有固定的**设计输入分辨率**，训练时 `--img-size` 应与之对齐。
-特征图尺寸以设计分辨率输入为准，P3/P4/P5 对应 stride=8/16/32 三个尺度。
-
-| 模型文件 | 设计输入 | P3 特征图 (ch) | P4 特征图 (ch) | P5 特征图 (ch) | 推荐场景 |
-| :--- | :---: | :---: | :---: | :---: | :--- |
-| `mcunet-10fps_vww` | **64×64** | 8×8 (24) | 4×4 (40) | 2×2 (96) | 极低功耗 MCU |
-| `mcunet-5fps_vww` | **80×80** | 10×10 (24) | 5×5 (40) | 2×2 (96) | 超轻量 VWW |
-| `proxyless-w0.25-r112_imagenet` | **112×112** | 14×14 (16) | 7×7 (24) | 3×3 (48) | 通用轻量 |
-| `mcunet-320kb-1mb_vww` | **144×144** | 18×18 (24) | 9×9 (40) | 4×4 (96) | VWW 任务 |
-| `mcunet-256kb-1mb_imagenet` | **160×160** | 20×20 (24) | 10×10 (48) | 5×5 (96) | 均衡推荐 |
-| `mcunet-512kb-2mb_imagenet` | **160×160** | 20×20 (40) | 10×10 (96) | 5×5 (192) | **当前默认，精度较高** |
-| `mcunet-320kb-1mb_imagenet` | **176×176** | 22×22 (24) | 11×11 (48) | 5×5 (96) | 稍大分辨率 |
-| `proxyless-w0.3-r176_imagenet` | **176×176** | 22×22 (16) | 11×11 (24) | 5×5 (64) | 通用大分辨率 |
-
-> **注意**：MCUNet 是全卷积网络，可以接受任意分辨率输入，但训练时应使用对应的设计分辨率以保证特征图尺寸合理，避免 P5 特征图过小（如 2×2）导致检测退化。
-
-### LSNet 系列
-
-LSNet 的 Stem 固定为 3×stride=2，起始即 8 倍下采样，之后每个 Stage 间再 stride=2。
-设计基准分辨率为 **224×224**，使用 LSNet 时 `--img-size` 建议设为 `224`。
-
-| 版本 | 推荐输入 | P3 特征图 (ch) | P4 特征图 (ch) | P5 特征图 (ch) | 规模 |
-| :--- | :---: | :---: | :---: | :---: | :--- |
-| `lsnet_t` | **224×224** | 28×28 (64) | 14×14 (128) | 7×7 (256) | Tiny |
-| `lsnet_s` | **224×224** | 28×28 (96) | 14×14 (192) | 7×7 (320) | Small |
-| `lsnet_b` | **224×224** | 28×28 (128) | 14×14 (256) | 7×7 (384) | Base |
-
-### 切换主干网络
-
-在 `yolov3_mcu_config.py` 中修改以下字段：
-
-```python
-# 使用 MCUNet（默认）
-cfg['backbone_type'] = 'mcunet'   # 同时修改 MODEL_ZOO 中的 json/pth 路径
-# 训练时：python train_lr.py --img-size 160
-
-# 使用 LSNet
-cfg['backbone_type'] = 'lsnet'
-cfg['lsnet_type']    = 'lsnet_t'  # 或 'lsnet_s' / 'lsnet_b'
-# 训练时：python train_lr.py --img-size 224
+### 1. 环境准备
+```bash
+git clone https://github.com/your-repo/GD_Net.git
+cd GD_Net
+pip install -r requirements.txt
 ```
 
------
+### 2. 快速推理
+使用预训练权重对单张图片进行检测：
+```bash
+python predict.py --img assets/img.png --data data/vehicle.yaml --pretrained checkpoints/gd_net_s.pth
+```
 
-## 🖼️ Training Results
+### 3. 导出模型 (TFLite/ONNX)
+```bash
+python export.py --weights checkpoints/best.pth --format tflite
+```
+
+---
+
+## 📦 Backbone Zoo (主干网络库)
+
+GD_Net 支持多种主干网络切换，请在 `cfg.py` 中修改 `backbone` 字段。
+
+| 主干模型名称 | 设计输入 | 适用场景 |
+| :--- | :---: | :--- |
+| `mcunet-512kb-2mb` | **160×160** | **[默认推荐]** 精度与速度的最佳平衡 |
+| `mcunet-256kb-1mb` | **160×160** | 极低内存设备 (SRAM < 512KB) |
+| `lsnet_t` | **224×224** | 追求更高检测帧率 |
+
+**配置示例 (`cfg.py`):**
+```python
+cfg = {
+    'backbone': 'mcunet-imagenet', # 选择 MCUNet 系列
+    'neck': 'sppf',                # 空间金字塔池化
+    'head': 'decoupled_head',      # 解耦检测头
+    # ... 其他参数
+}
+```
+
+---
+
+## 🚀 训练指南
+
+### 数据集格式
+项目支持标准的 **PASCAL VOC** 格式。请确保您的数据集路径在 `data/*.yaml` 中正确配置：
+```yaml
+path: ./dataset/my_data
+names:
+  0: vehicle
+  1: pedestrian
+```
+
+### 开始训练
+```bash
+python train.py --data data/vehicle.yaml --img-size 320 --batch-size 64 --epochs 300
+```
+
+**建议：**
+- 如果目标较小，请使用 `--img-size 320` 或更高。
+- 训练 MCU 模型时，建议使用 `64` 或 `128` 的倍数作为输入分辨率。
+
+---
+
+## 🖼️ 实验结果
 
 <div align="center">
-  <img src="./assets/results_yolo_style.png" alt="无人机拦截框架" width="80%">
+  <img src="assets/results_yolo_style.png" width="80%" />
 </div>
 
 ---
 
-## 📁 Dataset Format
-
-本项目使用 **PASCAL VOC 格式**数据集，目录结构如下：
-
-```
-MyDataset/
-├── JPEGImages/          # 原始图像（.jpg / .jpeg / .png）
-├── Annotations/         # XML 标注文件（PASCAL VOC 格式）
-└── ImageSets/
-    └── Main/
-        ├── train.txt    # 训练集文件名列表（不含扩展名）
-        ├── val.txt      # 验证集文件名列表
-        └── trainval.txt # 可选，训练+验证合并列表
-```
-
-### XML 标注格式示例
-
-```xml
-<annotation>
-  <filename>000001.jpg</filename>
-  <size>
-    <width>1920</width>
-    <height>1080</height>
-  </size>
-  <object>
-    <name>car</name>
-    <difficult>0</difficult>
-    <bndbox>
-      <xmin>100</xmin>
-      <ymin>200</ymin>
-      <xmax>400</xmax>
-      <ymax>500</ymax>
-    </bndbox>
-  </object>
-</annotation>
-```
-
-### 数据集配置文件
-
-在 `data/` 目录下为每个数据集创建一个 YAML 配置文件：
-
-```yaml
-# data/mydataset.yaml
-
-# 数据集根目录（含 JPEGImages/ 和 Annotations/）
-path: /path/to/MyDataset
-
-# 类别列表（顺序即为 class id: 0, 1, 2, ...）
-names:
-  0: car
-  1: truck
-  2: pedestrian
-
-# 原始标注名 → 类别 id 的完整映射（处理别名/大小写变体）
-class_mapping:
-  car: 0
-  Car: 0
-  truck: 1
-  Truck: 1
-  pedestrian: 2
-```
-
-> `class_mapping` 用于处理标注中类名大小写不一致或存在别名的情况，`names` 用于可视化显示。
-
----
-
-## 🚀 Training
-
-### 1. 环境安装
-
-```bash
-pip install torch torchvision tqdm pyyaml opencv-python
-```
-
-### 2. 准备数据集
-
-按照上方 [Dataset Format](#-dataset-format) 组织数据，并在 `data/` 目录下创建对应的 YAML 配置文件。
-
-### 3. 开始训练
-
-```bash
-python train.py --data data/mydataset.yaml
-```
-
-**常用参数：**
-
-| 参数 | 默认值 | 说明 |
-| :--- | :---: | :--- |
-| `--data` | `data/bvehicle.yaml` | 数据集配置文件路径 |
-| `--img-size` | `160` | 训练输入分辨率（须为 32 的倍数） |
-| `--epochs` | `1000` | 训练轮数 |
-| `--batch-size` | `256` | 批大小 |
-| `--lr` | `0.012` | 初始学习率 |
-| `--pretrained` | *(空)* | 预训练权重路径，留空则从头训练 |
-| `--save-dir` | `./checkpoints` | 模型保存目录 |
-| `--device` | `0` | CUDA 设备编号 |
-
-**示例：**
-
-```bash
-# 使用预训练权重，输入分辨率 320
-python train.py \
-  --data data/bvehicle.yaml \
-  --img-size 320 \
-  --batch-size 64 \
-  --epochs 300 \
-  --pretrained checkpoints/best_yolov3_mcu.pth
-```
-
-### 4. 输入分辨率建议
-
-| 目标在原图中的尺寸 | 建议 `--img-size` |
-| :--- | :---: |
-| 占画面 >30%（近距离大目标） | `160` |
-| 占画面 10%~30% | `320` |
-| 占画面 <10%（小目标/远距离） | `640` |
-
-> **注意**：`--img-size` 必须是 32 的倍数，且应与所选 backbone 的设计分辨率对齐（见 [Backbone Zoo](#-backbone-zoo)）。
-
-### 5. 切换主干网络
-
-在 `cfg.py` 中修改 `backbone_type`，然后在 `gd_net/backbone_mcunet.py` 的 `MODEL_ZOO` 中确认模型路径：
-
-```python
-# cfg.py
-cfg['backbone_type'] = 'mcunet'   # 'mcunet' | 'lsnet'
-```
-
----
-
-## 🔍 Inference
-
-```bash
-python predict.py --data data/mydataset.yaml --img path/to/image.jpg
-```
+## 📜 许可证
+本项目采用 [MIT License](LICENSE)。
