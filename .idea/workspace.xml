@@ -6,12 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="70c332e8-b513-4de1-8b28-ce4bd619d064" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cfg.py" beforeDir="false" afterPath="$PROJECT_DIR$/cfg.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoints/best_yolov3_mcu.pth" beforeDir="false" afterPath="$PROJECT_DIR$/checkpoints/yolov3_mcunet-512kb-2mb_imagenet.pth" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoints/eval_metrics.png" beforeDir="false" afterPath="$PROJECT_DIR$/checkpoints/eval_metrics.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoints/results_yolo_style.png" beforeDir="false" afterPath="$PROJECT_DIR$/checkpoints/results_yolo_style.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gd_net/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/gd_net/model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/predict.py" beforeDir="false" afterPath="$PROJECT_DIR$/predict.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoints/best_yolov3_mcu.pth" beforeDir="false" afterPath="$PROJECT_DIR$/checkpoints/best_yolov3_mcu.pth" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -161,7 +156,7 @@
       <workItem from="1767929815446" duration="69000" />
       <workItem from="1775022894997" duration="45724000" />
       <workItem from="1775286567118" duration="32741000" />
-      <workItem from="1775476986583" duration="14568000" />
+      <workItem from="1775476986583" duration="17303000" />
     </task>
     <servers />
   </component>
