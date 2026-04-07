@@ -94,7 +94,7 @@ def saved_model_to_tflite(saved_model_dir, tflite_path, quant, calib_dir, img_si
             os.path.join(calib_dir, f)
             for f in os.listdir(calib_dir)
             if f.lower().endswith(('.jpg', '.jpeg', '.png'))
-        ][:500]  # 最多取 200 张
+        ][:8000]  # 最多取 200 张
 
         def representative_dataset():
             for path in img_files:
