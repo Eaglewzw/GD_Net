@@ -1,5 +1,6 @@
 # Stanford Cars - One Class Mapping
 path: /media/verser/robot/Dataset/standford_car
+label_format: voc
 train: ImageSets/Main/train.txt
 val: ImageSets/Main/val.txt
 test: ImageSets/Main/test.txt

@@ -13,8 +13,8 @@ cfg = {
     # iou_thresh: anchor-to-GT 匹配时使用，训练阶段生效
     'iou_thresh': 0.25,
     # conf_thresh / nms_thresh: 推理后处理阈值，评估/推理时生效
-    'conf_thresh': 0.25,
-    'nms_thresh': 0.25,
+    'conf_thresh': 0.65,
+    'nms_thresh': 0.65,
 
     ## Backbone
     # 可选值:

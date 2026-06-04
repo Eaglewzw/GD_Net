@@ -1,0 +1,37 @@
+# Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
+
+# COCO 2017 dataset - 10 common classes subset
+# Filtered from original 80-class COCO by /filter_coco_classes.py
+# Example usage: python train.py --data coco10.yaml
+
+# Dataset root dir (absolute path to filtered dataset)
+path: /media/verser/robot/Dataset/coco/coco10
+train: train2017.txt  # train images (relative to 'path')
+val: val2017.txt      # val images (relative to 'path')
+test:                  # test images (optional)
+label_format: yolo
+
+# 10 Common Real-World Classes
+names:
+  0: person
+  1: bicycle
+  2: car
+  3: motorcycle
+  4: bus
+  5: truck
+  6: traffic light
+  7: stop sign
+  8: cat
+  9: dog
+# 原始标注名 → 类别 id 的完整映射（处理别名/变体）
+class_mapping:
+  person: 0
+  bicycle: 1
+  car: 2
+  motorcycle: 3
+  bus: 4
+  truck: 5
+  traffic light: 6
+  stop sign: 7
+  cat: 8
+  dog: 9

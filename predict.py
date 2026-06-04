@@ -54,7 +54,7 @@ class MCUNetDetector:
             num_classes    = len(self.class_names)
             self.num_classes = num_classes
         else:
-            self.class_names  = ['drone']
+            self.class_names  = ['Car']
             num_classes    = 1
 
         # 每个类别分配一个颜色
@@ -67,7 +67,11 @@ class MCUNetDetector:
         # 加载模型
         logger.info(f"Loading model from {weights_path} to {self.device}")
         logger.info(f"Classes ({num_classes}): {self.class_names}")
-        self.model = YOLOv3_McuNet(cfg, device=self.device, num_classes=num_classes, trainable=False)
+        self.model = YOLOv3_McuNet(
+            cfg, device=self.device, num_classes=num_classes, trainable=False,
+            conf_thresh=cfg['conf_thresh'],
+            nms_thresh=cfg['nms_thresh'],
+        )
 
         ckpt = torch.load(weights_path, map_location='cpu')
         # 兼容 state_dict 可能包含 'model' 键的情况
@@ -156,7 +160,7 @@ class MCUNetDetector:
         vis_frame, t_pre, t_infer, count, labels = self.infer_single_frame(frame)
 
         # 绘制文本信息 (不需要FPS)
-        info_text = f"Drones: {count} | Infer: {t_infer:.1f}ms"
+        info_text = f"Car: {count} | Infer: {t_infer:.1f}ms"
         cv2.putText(vis_frame, info_text, (20, 40), cv2.FONT_HERSHEY_SIMPLEX,
                     0.8, (0, 255, 0), 2)
 
@@ -243,12 +247,12 @@ if __name__ == '__main__':
 
     # 默认路径配置
     default_video = '/home/verser/Videos/2.mp4'
-    default_img = '/media/verser/robot/Dataset/standford_car/JPEGImages/00159.jpg'  # 你可以改成你的测试图片路径
+    default_img = '/home/verser/Pictures/zidane.jpg'  # 你可以改成你的测试图片路径
     default_weights = './checkpoints/best_yolov3_mcu.pth'
 
     parser.add_argument('--source', type=str, default=default_img, help='Path to image or video file')
     parser.add_argument('--weights', type=str, default=default_weights, help='Path to .pth model')
-    parser.add_argument('--data', type=str, default='/home/verser/Python/GD_Net/data/standford.yaml', help='数据集配置 yaml，如 data/udacity.yaml')
+    parser.add_argument('--data', type=str, default='/home/verser/Python/GD_Net/data/coco.yaml', help='数据集配置 yaml，如 data/udacity.yaml')
     parser.add_argument('--output', type=str, default='./det_results/', help='Directory to save results')
     parser.add_argument('--img-size', type=int, default=320, help='Inference image size')
 

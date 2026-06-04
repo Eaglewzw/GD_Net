@@ -1,4 +1,6 @@
 import os
+import csv
+import math
 import random
 import argparse
 import logging
@@ -172,79 +174,128 @@ def evaluate_and_plot(model, dataloader, device, num_classes, save_dir, class_na
         )
 
     # ---- 绘图 ----
-    n_cls  = len(unique_classes)
-    colors = plt.cm.tab10(np.linspace(0, 1, max(n_cls, 1)))
+    n_cls = len(unique_classes)
+    big = n_cls > 20  # 大类阈值：超过则启用自适应布局
 
-    fig, axes = plt.subplots(1, 3, figsize=(18, 5), tight_layout=True)
+    # 颜色：tab10 → tab20 → hsv，避免大类时撞色
+    if n_cls <= 10:
+        colors = plt.cm.tab10(np.linspace(0, 1, max(n_cls, 1)))
+    elif n_cls <= 20:
+        colors = plt.cm.tab20(np.linspace(0, 1, n_cls))
+    else:
+        colors = plt.cm.hsv(np.linspace(0, 1, n_cls, endpoint=False))
+
+    # 布局：≤20 类沿用原 1×3；>20 类改为上下两行，下排表格分多列
+    if big:
+        rows_per_col = 20
+        n_table_cols = math.ceil((n_cls + 1) / rows_per_col)  # +1 = mean 行
+        per_col      = math.ceil((n_cls + 1) / n_table_cols)
+        fig_w  = max(14.0, n_table_cols * 4.0)
+        tbl_h  = per_col * 0.28 + 1.2
+        fig    = plt.figure(figsize=(fig_w, 5 + tbl_h))
+        gs     = fig.add_gridspec(2, 2, height_ratios=[5, tbl_h], hspace=0.3)
+        ax_pr  = fig.add_subplot(gs[0, 0])
+        ax_f1  = fig.add_subplot(gs[0, 1])
+        ax_tbl = fig.add_subplot(gs[1, :])
+    else:
+        fig, axes = plt.subplots(1, 3, figsize=(18, 5), tight_layout=True)
+        ax_pr, ax_f1, ax_tbl = axes
 
     # -- PR 曲线 --
-    ax = axes[0]
     for i, c in enumerate(unique_classes):
         r = results[c]
         name = class_names.get(int(c), f"cls_{c}")
-        ax.plot(r['r_curve'], r['p_curve'],
-                color=colors[i], linewidth=2,
-                label=f"{name} AP={r['ap']:.3f}")
-    ax.set_xlabel('Recall')
-    ax.set_ylabel('Precision')
-    ax.set_title('Precision-Recall Curve')
-    ax.set_xlim(0, 1); ax.set_ylim(0, 1.05)
-    ax.legend(loc='lower left', fontsize=8)
-    ax.grid(True, linestyle='--', alpha=0.5)
+        ax_pr.plot(r['r_curve'], r['p_curve'],
+                   color=colors[i], linewidth=1.5,
+                   label=f"{name} AP={r['ap']:.3f}")
+    ax_pr.set_xlabel('Recall')
+    ax_pr.set_ylabel('Precision')
+    ax_pr.set_title('Precision-Recall Curve')
+    ax_pr.set_xlim(0, 1); ax_pr.set_ylim(0, 1.05)
+    ax_pr.grid(True, linestyle='--', alpha=0.5)
+    if not big:
+        ax_pr.legend(loc='lower left', fontsize=8)
 
     # -- F1 曲线 --
-    ax = axes[1]
     for i, c in enumerate(unique_classes):
         r = results[c]
         name = class_names.get(int(c), f"cls_{c}")
-        ax.plot(r['conf_curve'], r['f1_curve'],
-                color=colors[i], linewidth=2,
-                label=f"{name} F1={r['f1']:.3f}")
-    ax.set_xlabel('Confidence Threshold')
-    ax.set_ylabel('F1 Score')
-    ax.set_title('F1-Confidence Curve')
-    ax.set_xlim(0, 1); ax.set_ylim(0, 1.05)
-    ax.legend(loc='upper right', fontsize=8)
-    ax.grid(True, linestyle='--', alpha=0.5)
+        ax_f1.plot(r['conf_curve'], r['f1_curve'],
+                   color=colors[i], linewidth=1.5,
+                   label=f"{name} F1={r['f1']:.3f}")
+    ax_f1.set_xlabel('Confidence Threshold')
+    ax_f1.set_ylabel('F1 Score')
+    ax_f1.set_title('F1-Confidence Curve')
+    ax_f1.set_xlim(0, 1); ax_f1.set_ylim(0, 1.05)
+    ax_f1.grid(True, linestyle='--', alpha=0.5)
+    if not big:
+        ax_f1.legend(loc='upper right', fontsize=8)
 
     # -- 指标汇总表 --
-    ax = axes[2]
-    ax.axis('off')
+    ax_tbl.axis('off')
     col_labels = ['Class', 'Precision', 'Recall', 'F1', 'AP@0.5']
-    table_data = []
+    rows = []
     for c in unique_classes:
         r = results[c]
         name = class_names.get(int(c), f"cls_{c}")
-        table_data.append([
-            name,
-            f"{r['p']:.4f}",
-            f"{r['r']:.4f}",
-            f"{r['f1']:.4f}",
-            f"{r['ap']:.4f}",
-        ])
-    # 均值行
+        rows.append([name, f"{r['p']:.4f}", f"{r['r']:.4f}",
+                     f"{r['f1']:.4f}", f"{r['ap']:.4f}"])
     mean_p  = np.mean([results[c]['p']  for c in unique_classes])
     mean_r  = np.mean([results[c]['r']  for c in unique_classes])
     mean_f1 = np.mean([results[c]['f1'] for c in unique_classes])
     mean_ap = np.mean([results[c]['ap'] for c in unique_classes])
-    table_data.append(['mean', f"{mean_p:.4f}", f"{mean_r:.4f}",
-                        f"{mean_f1:.4f}", f"{mean_ap:.4f}"])
+    rows.append(['mean', f"{mean_p:.4f}", f"{mean_r:.4f}",
+                 f"{mean_f1:.4f}", f"{mean_ap:.4f}"])
 
-    tbl = ax.table(cellText=table_data, colLabels=col_labels,
-                   loc='center', cellLoc='center')
-    tbl.auto_set_font_size(False)
-    tbl.set_fontsize(10)
-    tbl.scale(1.2, 1.8)
-    # 加粗均值行
-    last_row = len(table_data)
-    for col in range(len(col_labels)):
-        tbl[last_row, col].set_facecolor('#d0e8ff')
-    ax.set_title('Metrics Summary', fontsize=12, pad=12)
+    if big:
+        # 将 rows 横向拼成 n_table_cols 个子表，每个子表 per_col 行
+        merged_labels = col_labels * n_table_cols
+        merged_rows = []
+        for r_i in range(per_col):
+            row = []
+            for col_i in range(n_table_cols):
+                idx = col_i * per_col + r_i
+                if idx < len(rows):
+                    row.extend(rows[idx])
+                else:
+                    row.extend([''] * len(col_labels))
+            merged_rows.append(row)
+        tbl = ax_tbl.table(cellText=merged_rows, colLabels=merged_labels,
+                           loc='center', cellLoc='center')
+        tbl.auto_set_font_size(False)
+        tbl.set_fontsize(7)
+        tbl.scale(1.0, 1.2)
+        # 高亮均值行（位于最后一行 → 定位它在哪个子列）
+        mean_idx       = len(rows) - 1
+        mean_sub_col   = mean_idx // per_col
+        mean_table_row = mean_idx %  per_col + 1  # +1 跳过表头
+        for k in range(len(col_labels)):
+            tbl[mean_table_row,
+                mean_sub_col * len(col_labels) + k].set_facecolor('#d0e8ff')
+    else:
+        tbl = ax_tbl.table(cellText=rows, colLabels=col_labels,
+                           loc='center', cellLoc='center')
+        tbl.auto_set_font_size(False)
+        tbl.set_fontsize(10)
+        tbl.scale(1.2, 1.8)
+        for col in range(len(col_labels)):
+            tbl[len(rows), col].set_facecolor('#d0e8ff')
+    ax_tbl.set_title('Metrics Summary', fontsize=12, pad=12)
 
     save_path = os.path.join(save_dir, "eval_metrics.png")
-    fig.savefig(save_path, dpi=150)
+    fig.savefig(save_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
+
+    # 全量指标同步写 CSV，PNG 永远只做快览
+    csv_path = os.path.join(save_dir, "eval_metrics.csv")
+    with open(csv_path, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(col_labels)
+        for row in rows:
+            writer.writerow(row)
+
     logger.info(f"评估图表已保存至 {save_path}")
+    logger.info(f"评估指标 CSV 已保存至 {csv_path}")
     logger.info(f"  mAP@0.5={mean_ap:.4f}  P={mean_p:.4f}  R={mean_r:.4f}  F1={mean_f1:.4f}")
 
     model.trainable = True
@@ -252,25 +303,42 @@ def evaluate_and_plot(model, dataloader, device, num_classes, save_dir, class_na
 
 
 def load_data_cfg(yaml_path):
-    """从 yaml 文件读取数据集配置，返回 (data_root, num_classes, class_mapping)"""
+    """从 yaml 文件读取数据集配置，返回 (img_dir, label_dir, label_format,
+       num_classes, class_mapping, class_names)"""
     with open(yaml_path, 'r') as f:
         data = yaml.safe_load(f)
 
-    data_root     = data['path']
-    class_mapping = data['class_mapping']
-    num_classes   = len(set(class_mapping.values()))
-    class_names   = data.get('names', {})
+    data_root    = data['path']
+    label_format = data.get('label_format', 'voc')
+    class_names  = data.get('names', {})
+
+    if label_format == 'yolo':
+        num_classes = data.get('num_classes', len(class_names))
+        class_mapping = data.get('class_mapping', {i: i for i in range(num_classes)})
+    else:
+        class_mapping = data['class_mapping']
+        num_classes   = len(set(class_mapping.values()))
+
+    # 路径：支持绝对路径和相对路径（相对 path）
+    img_dir   = data.get('img_dir', 'JPEGImages')
+    label_dir = data.get('label_dir', 'Annotations')
+    if not os.path.isabs(img_dir):
+        img_dir = os.path.join(data_root, img_dir)
+    if not os.path.isabs(label_dir):
+        label_dir = os.path.join(data_root, label_dir)
 
     logger.info(f"数据集配置: {yaml_path}")
-    logger.info(f"  路径: {data_root}")
-    logger.info(f"  类别数: {num_classes}  {list(class_names.values())}")
-    return data_root, num_classes, class_mapping
+    logger.info(f"  图片目录: {img_dir}")
+    logger.info(f"  标签目录: {label_dir}")
+    logger.info(f"  标签格式: {label_format}")
+    logger.info(f"  类别数: {num_classes}  {list(class_names.values())[:10]}{'...' if len(class_names) > 10 else ''}")
+    return img_dir, label_dir, label_format, num_classes, class_mapping, class_names
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="YOLOv3-McuNet Training")
     # 数据集配置 yaml（优先级高于 --data-root / --num-classes）
-    parser.add_argument('--data', type=str, default='/home/verser/Python/GD_Net/data/standford.yaml',
+    parser.add_argument('--data', type=str, default='/home/verser/Python/GD_Net/data/coco.yaml',
                         help='数据集配置文件，如 data/udacity.yaml')
     # 兼容旧用法（当未指定 --data 时生效）
     parser.add_argument('--data-root', type=str,
@@ -285,7 +353,7 @@ def parse_args():
                         default='/home/verser/Python/GD_Net/checkpoints/best_yolov3_mcu.pth',
                         help='预训练权重路径，留空则从头训练')
     # 训练超参数
-    parser.add_argument('--epochs', type=int, default=500)
+    parser.add_argument('--epochs', type=int, default=100)
     parser.add_argument('--batch-size', type=int, default=64)
     # 必须是32的倍数, cfg.py中max_stride: 32，特征图需要整除
     parser.add_argument('--img-size', type=int, default=320)  #必须是32的倍数
@@ -311,19 +379,21 @@ def main():
 
     # ------------------- 数据集配置 -------------------
     if args.data:
-        data_root, num_classes, class_mapping = load_data_cfg(args.data)
+        img_dir, label_dir, label_format, num_classes, class_mapping, class_names_map = \
+            load_data_cfg(args.data)
     else:
-        data_root    = args.data_root
-        num_classes  = args.num_classes
-        class_mapping = None   # 使用 YoloDataset 内置默认值
-
-    img_dir   = os.path.join(data_root, 'JPEGImages')
-    label_dir = os.path.join(data_root, 'Annotations')
+        img_dir       = os.path.join(args.data_root, 'JPEGImages')
+        label_dir     = os.path.join(args.data_root, 'Annotations')
+        label_format  = 'voc'
+        num_classes   = args.num_classes
+        class_mapping = None
+        class_names_map = None
 
     dataset = YoloDataset(img_dir=img_dir, label_dir=label_dir,
                           img_size=args.img_size,
                           transform=torchvision.transforms.ToTensor(),
-                          class_mapping=class_mapping)
+                          class_mapping=class_mapping,
+                          label_format=label_format)
     dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True,
                             num_workers=args.workers, collate_fn=collate_fn,
                             persistent_workers=True, pin_memory=True)
@@ -360,6 +430,12 @@ def main():
 
     epoch_list, loss_total_list = [], []
     loss_obj_list, loss_cls_list, loss_box_list = [], [], []
+
+    # 初始化 loss CSV，每个 epoch 实时写入
+    loss_csv_path = os.path.join(args.save_dir, "loss_history.csv")
+    loss_csv = open(loss_csv_path, 'w', newline='')
+    loss_writer = csv.writer(loss_csv)
+    loss_writer.writerow(['epoch', 'total_loss', 'box_loss', 'obj_loss', 'cls_loss'])
 
     logger.info(f"开始训练，共 {args.epochs} 个 epoch")
     logger.info(('%10s' * 7) % ('Epoch', 'gpu_mem', 'box', 'obj', 'cls', 'labels', 'img_size'))
@@ -415,6 +491,11 @@ def main():
         loss_cls_list.append(avg_cls)
         loss_box_list.append(avg_box)
 
+        # 每个 epoch 实时写入 loss CSV
+        loss_writer.writerow([epoch + 1, f'{avg_loss:.6f}', f'{avg_box:.6f}',
+                              f'{avg_obj:.6f}', f'{avg_cls:.6f}'])
+        loss_csv.flush()
+
         if avg_loss < best_loss:
             best_loss = avg_loss
             best_epoch = epoch + 1
@@ -422,19 +503,14 @@ def main():
                        os.path.join(args.save_dir, "best_yolov3_mcu.pth"))
 
     logger.info(f"训练完成！最佳模型在 epoch {best_epoch}，loss={best_loss:.4f}")
+    loss_csv.close()
+    logger.info(f"Loss 历史已保存至 {loss_csv_path}")
 
     # ------------------- 加载最优权重评估 -------------------
     best_ckpt = os.path.join(args.save_dir, "best_yolov3_mcu.pth")
     if os.path.exists(best_ckpt):
         logger.info("加载最佳权重进行评估...")
         model.load_state_dict(torch.load(best_ckpt, map_location=device))
-
-    # 读取类别名
-    class_names_map = None
-    if args.data:
-        with open(args.data, 'r') as f:
-            _d = yaml.safe_load(f)
-        class_names_map = _d.get('names', None)   # {0: 'car', ...}
 
     evaluate_and_plot(model, dataloader, device, num_classes,
                       args.save_dir, class_names=class_names_map)

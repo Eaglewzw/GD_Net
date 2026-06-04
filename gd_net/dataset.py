@@ -10,34 +10,41 @@ import xml.etree.ElementTree as ET
 
 
 class YoloDataset(Dataset):
-    def __init__(self, img_dir, label_dir, img_size=640, transform=None, class_mapping=None):
+    def __init__(self, img_dir, label_dir, img_size=640, transform=None,
+                 class_mapping=None, label_format='voc'):
 
-        self.img_dir = img_dir  # 添加这行
-        self.label_dir = label_dir  # 添加这行
+        self.img_dir = img_dir
+        self.label_dir = label_dir
+        self.label_format = label_format
+
         # 支持 jpg/jpeg/png
         self.img_files = sorted(
             glob.glob(os.path.join(img_dir, '*.jpg')) +
             glob.glob(os.path.join(img_dir, '*.jpeg')) +
             glob.glob(os.path.join(img_dir, '*.png'))
         )
-        # 修改：查找XML标签文件
-        self.label_files = sorted(glob.glob(os.path.join(label_dir, '*.xml')))
 
-        # 设置类别映射，如果没有提供则使用默认的
+        if label_format == 'yolo':
+            self.label_files = sorted(glob.glob(os.path.join(label_dir, '*.txt')))
+            self.valid_class_ids = set(class_mapping.values()) if class_mapping else None
+        else:
+            self.label_files = sorted(glob.glob(os.path.join(label_dir, '*.xml')))
+
+        # 设置类别映射
         if class_mapping is None:
-            self.class_mapping = {'drone': 0, 'Drone': 0, 'DRONE': 0, 'droned': 0}  # 添加不同大小写形式
+            self.class_mapping = {'drone': 0, 'Drone': 0, 'DRONE': 0, 'droned': 0}
         else:
             self.class_mapping = class_mapping
 
-        # 确保文件数量匹配
-        if len(self.img_files) != len(self.label_files):
-            print(f"警告: 图像数量({len(self.img_files)})与标签数量({len(self.label_files)})不匹配")
-            # 验证文件名是否匹配（基于文件名基本部分）
-            img_basenames = {os.path.splitext(os.path.basename(f))[0] for f in self.img_files}
-            label_basenames = {os.path.splitext(os.path.basename(f))[0] for f in self.label_files}
-            unmatched = img_basenames.symmetric_difference(label_basenames)
-            if unmatched:
-                print(f"警告: 发现未匹配的文件: {unmatched}")
+        # 文件数量统计（YOLO格式允许图片无标签，只作信息提示）
+        img_set = {os.path.splitext(os.path.basename(f))[0] for f in self.img_files}
+        lbl_set = {os.path.splitext(os.path.basename(f))[0] for f in self.label_files}
+        imgs_no_label = img_set - lbl_set
+        labels_no_img = lbl_set - img_set
+        if imgs_no_label:
+            print(f"信息: {len(imgs_no_label)} 张图片没有对应的标签文件")
+        if labels_no_img:
+            print(f"信息: {len(labels_no_img)} 个标签文件没有对应的图片")
 
         self.img_size = img_size
         self.transform = transform
@@ -46,8 +53,9 @@ class YoloDataset(Dataset):
             raise FileNotFoundError(f"No images found in {img_dir}. "
                                     f"Supported formats: jpg, jpeg, png")
         if len(self.label_files) == 0:
+            ext = 'txt' if label_format == 'yolo' else 'xml'
             raise FileNotFoundError(f"No labels found in {label_dir}. "
-                                    f"Expected .xml files for PASCAL VOC format")
+                                    f"Expected .{ext} files for {label_format.upper()} format")
 
     def __len__(self):
         return len(self.img_files)
@@ -57,34 +65,18 @@ class YoloDataset(Dataset):
         img_pil = Image.open(img_path).convert('RGB')
         orig_w, orig_h = img_pil.size
 
-        # 构造对应的 XML 路径
         img_name = os.path.splitext(os.path.basename(img_path))[0]
-        label_path = os.path.join(self.label_dir, img_name + '.xml')
+        ext = '.txt' if self.label_format == 'yolo' else '.xml'
+        label_path = os.path.join(self.label_dir, img_name + ext)
 
         boxes = []
         labels = []
 
         if os.path.exists(label_path):
-            tree = ET.parse(label_path)
-            root = tree.getroot()
-
-            for obj in root.findall('object'):
-                name = obj.find('name').text.strip()        # 这里就是 "Drone"
-                if name not in self.class_mapping:
-                    print(f"[Warning] Unknown class '{name}' in {label_path}")
-                    continue
-
-                bbox = obj.find('bndbox')
-                xmin = float(bbox.find('xmin').text)
-                ymin = float(bbox.find('ymin').text)
-                xmax = float(bbox.find('xmax').text)
-                ymax = float(bbox.find('ymax').text)
-
-                if xmin >= xmax or ymin >= ymax:
-                    continue
-
-                boxes.append([xmin, ymin, xmax, ymax])
-                labels.append(self.class_mapping[name])
+            if self.label_format == 'yolo':
+                boxes, labels = self._parse_yolo_label(label_path, orig_w, orig_h)
+            else:
+                boxes, labels = self._parse_voc_label(label_path)
 
         boxes = torch.tensor(boxes, dtype=torch.float32) if boxes else torch.zeros((0, 4))
         labels = torch.tensor(labels, dtype=torch.int64) if labels else torch.zeros((0,))
@@ -108,6 +100,51 @@ class YoloDataset(Dataset):
 
         return img_tensor, target
 
+
+    def _parse_yolo_label(self, label_path, img_w, img_h):
+        """解析 YOLO 格式标签: class_id cx cy w h (归一化坐标) → xyxy"""
+        boxes, labels = [], []
+        with open(label_path, 'r') as f:
+            for line in f:
+                parts = line.strip().split()
+                if len(parts) < 5:
+                    continue
+                cls_id = int(parts[0])
+                cx, cy, w, h = map(float, parts[1:5])
+                if w <= 0 or h <= 0:
+                    continue
+                if self.valid_class_ids is not None and cls_id not in self.valid_class_ids:
+                    print(f"[Warning] Unknown class '{cls_id}' in {label_path}")
+                    continue
+                # 归一化 cx,cy,w,h → 绝对 xmin,ymin,xmax,ymax
+                xmin = (cx - w / 2) * img_w
+                ymin = (cy - h / 2) * img_h
+                xmax = (cx + w / 2) * img_w
+                ymax = (cy + h / 2) * img_h
+                boxes.append([xmin, ymin, xmax, ymax])
+                labels.append(cls_id)
+        return boxes, labels
+
+    def _parse_voc_label(self, label_path):
+        """解析 VOC XML 标签"""
+        boxes, labels = [], []
+        tree = ET.parse(label_path)
+        root = tree.getroot()
+        for obj in root.findall('object'):
+            name = obj.find('name').text.strip()
+            if name not in self.class_mapping:
+                print(f"[Warning] Unknown class '{name}' in {label_path}")
+                continue
+            bbox = obj.find('bndbox')
+            xmin = float(bbox.find('xmin').text)
+            ymin = float(bbox.find('ymin').text)
+            xmax = float(bbox.find('xmax').text)
+            ymax = float(bbox.find('ymax').text)
+            if xmin >= xmax or ymin >= ymax:
+                continue
+            boxes.append([xmin, ymin, xmax, ymax])
+            labels.append(self.class_mapping[name])
+        return boxes, labels
 
     def letterbox(self, img_pil, new_shape=640, color=(114, 114, 114)):
         img = np.array(img_pil)

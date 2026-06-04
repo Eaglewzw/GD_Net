@@ -28,8 +28,7 @@
 
 ## 检测演示
 <div align="center">
-  <img src="assets/detect_result.png" alt="检测结果展示" width="80%">
-  <p><i>（多样化场景下车辆目标检测效果）</i></p>
+  <img src="assets/bus.jpg" alt="检测结果展示" width="80%">
 </div>
 
 ---
