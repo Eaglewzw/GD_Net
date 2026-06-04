@@ -28,7 +28,7 @@
 
 ## 检测演示
 <div align="center">
-  <img src="assets/bus.jpg" alt="检测结果展示" width="80%">
+  <img src="assets/zidane.jpg" alt="检测结果展示" width="80%">
 </div>
 
 ---
