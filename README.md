@@ -111,7 +111,11 @@ names: {0: car}
 python train.py --data data/vehicle.yaml --img-size 320 --batch-size 64 --epochs 300
 
 # 模型推理
-python predict.py --source assets/img.png --weights checkpoints/best_yolov3_mcu.pth --data data/vehicle.yaml
+python predict.py \
+  --source assets/zidane.jpg \
+  --weights checkpoints/car_yolov3_mcu.pth \
+  --data data/standford.yaml \
+  --output det_results
 
 # 模型评估
 python val.py --data data/vehicle.yaml --weights checkpoints/best_yolov3_mcu.pth       # YOLO 格式
