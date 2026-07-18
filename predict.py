@@ -247,12 +247,12 @@ if __name__ == '__main__':
 
     # 默认路径配置
     default_video = '/home/verser/Videos/2.mp4'
-    default_img = '/home/verser/Pictures/zidane.jpg'  # 你可以改成你的测试图片路径
+    default_img = '/home/verser/Pictures/zidane.jpg'  #你可以改成你的测试图片路径
     default_weights = './checkpoints/best_yolov3_mcu.pth'
 
     parser.add_argument('--source', type=str, default=default_img, help='Path to image or video file')
     parser.add_argument('--weights', type=str, default=default_weights, help='Path to .pth model')
-    parser.add_argument('--data', type=str, default='/home/verser/Python/GD_Net/data/coco.yaml', help='数据集配置 yaml，如 data/udacity.yaml')
+    parser.add_argument('--data', type=str, default='/home/verser/Python/GD_Net/data/coco80.yaml', help='数据集配置 yaml，如 data/udacity.yaml')
     parser.add_argument('--output', type=str, default='./det_results/', help='Directory to save results')
     parser.add_argument('--img-size', type=int, default=320, help='Inference image size')
 
