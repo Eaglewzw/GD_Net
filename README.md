@@ -27,9 +27,12 @@
 ---
 
 ## 检测演示
-<div align="center">
-  <img src="assets/zidane.jpg" alt="检测结果展示" width="80%">
-</div>
+
+| PC 检测效果 | ESP32-P4 部署效果 |
+| :---: | :---: |
+| <img src="assets/zidane.jpg" alt="PC 检测效果" width="100%"> | <img src="assets/pipeline.png" alt="ESP32-P4 部署效果" width="100%"> |
+
+> 本项目模型在ESP32 P4实机部署代码: [EdgeDetect-P4](https://github.com/Eaglewzw/EdgeDetect-P4)
 
 ---
 
