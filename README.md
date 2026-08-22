@@ -1,7 +1,9 @@
 # GD-Net
 ### Lightweight Object Detection Framework for Microcontrollers (MCUs)
 
-**English** | [简体中文](README.zh-CN.md)
+<p align="center">
+  <strong>English</strong> | <a href="README.zh-CN.md">简体中文</a>
+</p>
 
 <div align="center">
 
@@ -9,8 +11,6 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-1.10%2B-EE4C2C?style=for-the-badge&logo=pytorch)](https://pytorch.org/)
 [![TFLite](https://img.shields.io/badge/TFLite-Micro-orange?style=for-the-badge&logo=tensorflow)](https://www.tensorflow.org/lite/microcontrollers)
 [![ONNX](https://img.shields.io/badge/ONNX-Deployable-005CED?style=for-the-badge&logo=onnx)](https://onnx.ai/)
-[![Params](https://img.shields.io/badge/Params-1.016M-brightgreen?style=for-the-badge)](#)
-[![License](https://img.shields.io/badge/License-MIT-lightgrey?style=for-the-badge)](LICENSE)
 
 </div>
 

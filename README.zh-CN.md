@@ -1,7 +1,9 @@
 # GD-Net
 ### 面向微控制器 (MCU) 的轻量化目标检测框架 (Lightweight Object Detection Framework for MCUs)
 
-[English](README.md) | **简体中文**
+<p align="center">
+  <a href="README.md">English</a> | <strong>简体中文</strong>
+</p>
 
 <div align="center">
 
@@ -9,8 +11,6 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-1.10%2B-EE4C2C?style=for-the-badge&logo=pytorch)](https://pytorch.org/)
 [![TFLite](https://img.shields.io/badge/TFLite-Micro-orange?style=for-the-badge&logo=tensorflow)](https://www.tensorflow.org/lite/microcontrollers)
 [![ONNX](https://img.shields.io/badge/ONNX-Deployable-005CED?style=for-the-badge&logo=onnx)](https://onnx.ai/)
-[![Params](https://img.shields.io/badge/Params-1.016M-brightgreen?style=for-the-badge)](#)
-[![License](https://img.shields.io/badge/License-MIT-lightgrey?style=for-the-badge)](LICENSE)
 
 </div>
 
